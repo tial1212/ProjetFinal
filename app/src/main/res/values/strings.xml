@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">ProjetFinal</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+
+    <!--             menu         -->
+    <string name="lbl_nemu_private">Private</string>
+    <string name="lbl_nemu_private_playlist">My Playlist</string>
+    <string name="lbl_nemu_private_song">My Songs</string>
+    <string name="lbl_nemu_private_add_song">Add Song</string>
+    <string name="lbl_nemu_private_add_playlist">Add Playlist</string>
+
+    <string name="lbl_nemu_public">Public</string>
+    <string name="lbl_nemu_public_playlist">Public Songs</string>
+    <string name="lbl_nemu_public_song">Public Playlist</string>
+
+
+    <!--         create user         -->
+    <string name="lbl_create1_info">Création de compte</string>
+    <string name="lbl_create1_email">Entrer votre email</string>
+    <string name="lbl_create1_alias">Choisir un alias</string>
+    <string name="lbl_create1_psdw1">Choisir le mot de pase</string>
+    <string name="lbl_create1_pswd2">Confirmer le mot de pase</string>
+    <string name="lbl_create1_avatar">Choisir un avatar</string>
+    <string name="lbl_create1_btn_avatar">Choisir</string>
+    <string name="lbl_create1_btn_send">Créer</string>
+
+    <!--     confirm create user     -->
+    <string name="lbl_create2_info">Confirmation de création</string>
+    <string name="lbl_create2_captcha">Captcha</string>
+    <string name="lbl_create2_captcha_type">Retaper le captcha</string>
+    <string name="lbl_create2_btn_send">Confirmer</string>
+
+
+
+</resources>
