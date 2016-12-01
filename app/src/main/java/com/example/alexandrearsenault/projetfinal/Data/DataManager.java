@@ -18,7 +18,7 @@ import java.net.URL;
  */
 public class DataManager {
     private static DataManager instance = null;
-    private static String SERVER_PATH = "http://localhost:8080";
+    private static String SERVER_PATH = "http://424t.cgodin.qc.ca:8480//rest-example/";
     private static String SERVER_PATH_A1    = SERVER_PATH + "/service/token/getActionToken?";
     private static String SERVER_PATH_A2    = SERVER_PATH + "/service/utilisateur/login?";
     private static String SERVER_PATH_A3    = SERVER_PATH + "/service/utilisateur/logoff?";
@@ -28,7 +28,7 @@ public class DataManager {
     private static String SERVER_PATH_U8    = SERVER_PATH + "/service/musique/createSong?";
     private static String SERVER_PATH_U9_U10= SERVER_PATH + "/service/musique/getPrivateSong?";
     private static String SERVER_PATH_P3_P4 = SERVER_PATH + "/service/musique/getPublicSong";
-    private static String SERVER_PATH_U11   = SERVER_PATH + " /service/musique/modify?";
+    private static String SERVER_PATH_U11   = SERVER_PATH + "/service/musique/modify?";
     private static String SERVER_PATH_U12   = SERVER_PATH + "/service/musique/setActive?";
     private static String SERVER_PATH_U13   = SERVER_PATH + "/service/musique/setPublic?";
     private static String SERVER_PATH_U3    = SERVER_PATH + "/service/listeLecture/createPlaylist?";
@@ -108,8 +108,8 @@ public class DataManager {
      * @return token OR null
      */
     public Token getActionToken(String pEMail) {
-        Log.e("DataManager", "getToken("+pEMail+")");
-        String request = SERVER_PATH +"getActionToken?email="+pEMail;  //FIXME
+        Log.e("DataManager", "getActionToken("+pEMail+")");
+        String request = SERVER_PATH_A1+"courriel="+pEMail ;
         String json = DownloadJSONAsyncTask.readJSONfromUrl(request);
         try {
             JSONObject jsonObjFilm = new JSONObject(json);//FIXME
@@ -120,62 +120,97 @@ public class DataManager {
             if (salt != null ){token.setSalt(salt);}
             return token;
         } catch (Exception e) {
-            Log.e("Film ERROR", " movie failled");
             if (e instanceof JSONException) {
-                Log.e("ERROR", "JSON cast");
+                Log.e("DataManager.getAcToken", "ERROR JSON cast");
             } else if (e instanceof Exception) {
-                Log.e("ERROR", "Unknown Error");
+                Log.e("DataManager.getAcToken", "ERROR Unknown");
             }
             return null;
         }
     }
 
-    public void getActionToken(String pEMail){
-        Log.e("DataManager", "getActionToken("+pEMail+")");
-        String request = SERVER_PATH_P1 ;
-        new DownloadJSONAsyncTask(this , ACTION_P1 , request );
-    }
+
+
     public void login(String pCourriel, String pMotDePasse) {
-
+        Log.e("DataManager", "login("+pCourriel+","+pMotDePasse+")");
+        String request = SERVER_PATH_A2+"courriel="+pCourriel+"&motDePasse="+pMotDePasse;
+        new DownloadJSONAsyncTask(this , ACTION_A2 , request );
     }
-    public void logoff(int pIdToken  ,String pKey ,String pCourriel) {
-
+    public void logoff(int pIdToken  ,String pKey ,String pCourriel) {;
+        Log.e("DataManager", "login("+pIdToken+","+pKey+","+pCourriel+")");
+        String request = SERVER_PATH_A3+"idToken="+pIdToken+"&cle="+pKey+"&courriel="+pCourriel;
+        new DownloadJSONAsyncTask(this , ACTION_A3 , request );
     }
     public void createUser (String pAalias ,String pMotDePasse ,String pCourriel ,int pIdAvatar) {
+        Log.e("DataManager", "createUser("+pAalias+","+pMotDePasse+","+pCourriel+","+pIdAvatar+")");
+        String request = SERVER_PATH_P1+"alias="+pAalias+"&motDePasse="+pMotDePasse+"&courriel="+pCourriel+"&avatar="+pIdAvatar;
+        new DownloadJSONAsyncTask(this , ACTION_P1 , request );
 
     }
     public void confirmCreateUser(int pIdToken ,String pCaptchaVal) {
-
+        Log.e("DataManager", "confirmCreateUser("+pIdToken+","+pCaptchaVal+")");
+        String request = SERVER_PATH_U2+"idToken="+pIdToken+"&captchaVal="+pCaptchaVal;
+        new DownloadJSONAsyncTask(this , ACTION_U2 , request );
     }
     public void modifierUser(int pIdToken,String pKey,String pEMaill,String pPasword,String pAlias,  int  pIdAvatar) {
-
+        Log.e("DataManager", "modifierUser("+pIdToken+","+pKey+","+pEMaill+","+pPasword+","+pAlias+","+pIdAvatar+")");
+        String request = SERVER_PATH_U1+"idToken="+pIdToken+"&cle="+pKey+"&courriel="+pEMaill+"&motDePasse="+pPasword+"&alias="+pAlias+"&avatar="+pIdAvatar;
+        new DownloadJSONAsyncTask(this , ACTION_U1 , request );
     }
     public void createSong(int pIdToken ,String pKey ,String pTitle ,String pArtist ,String pMusic ,String pCoverArt ,boolean pIsPublic ,boolean pIsActive) {
-
+        Log.e("DataManager", "createSong("+pIdToken+","+pKey+","+pArtist+","+pMusic+","+pCoverArt+","+pIsPublic+","+pIsActive+")");
+        String request = SERVER_PATH_U8+"idToken="+pIdToken+"&cle="+pKey+"&titre="+pTitle+"&artiste="+pArtist+"&musique="+pMusic+"&coverArt="+pCoverArt+"&public="+pIsPublic+"&active="+pIsActive;
+        new DownloadJSONAsyncTask(this , ACTION_U8 , request );
     }
     public void getPrivateSong(int pIdToken ,String pKey ,int pIdSong ) {
+        Log.e("DataManager", "getPrivateSong("+pIdToken+","+pKey+","+pIdSong+")");
+        String request = SERVER_PATH_U9_U10+"idToken="+pIdToken+"&cle="+pKey+"&idSong="+pIdSong;
+        new DownloadJSONAsyncTask(this , ACTION_U9_U10 , request );
 
     }
     public void getPublicSong (int pIdToken ,String pKey ,int pIdSong ) {
+        Log.e("DataManager", "getPublicSong("+pIdToken+","+pKey+","+pIdSong+")");
+        String request = SERVER_PATH_P3_P4+"idToken="+pIdToken+"&cle="+pKey+"&idSong="+pIdSong;
+        new DownloadJSONAsyncTask(this , ACTION_P3_P4 , request );
 
     }
     public void modifySong (int pIdToken,String pKey ,int pIdSong,String pTitle ,String pArtist ,String pCoverArt ,boolean pIsPublic ,boolean pIsActive) {
+        Log.e("DataManager", "modifySong("+pIdToken+","+pKey+","+pIdSong+","+pTitle+","+pArtist+","+pCoverArt+","+pIsPublic+","+pIsActive+")");
+        String request = SERVER_PATH_U11+"idToken="+pIdToken+"&cle="+pKey+"&idSong="+pIdSong+"&titre="+pTitle+"&artiste="+pArtist+"&vignette="+pCoverArt+"&publique="+pIsPublic+"&active="+pIsActive;
+        new DownloadJSONAsyncTask(this , ACTION_U11 , request );
 
     }
     public void setActiveSong(int pIdToken ,String pKey ,int pIdSong ,boolean pActive  ) {
+        Log.e("DataManager", "setActiveSong("+pIdToken+","+pKey+","+pIdSong+","+pActive+")");
+        String request = SERVER_PATH_U12+"idToken="+pIdToken+"&cle="+pKey+"&idSong="+pIdSong+"&active="+pActive;
+        new DownloadJSONAsyncTask(this , ACTION_U12 , request );
 
     }
-    public void setPublicSong(int pIdSong ,String pIdToken ,boolean pIsPublic ) {
-
+    public void setPublicSong(String pIdToken ,String pKey , int pIdSong ,boolean pIsPublic ) {
+        Log.e("DataManager", "setPublicSong("+pIdToken+","+pKey+","+pIdSong+","+pIsPublic+")");
+        String request = SERVER_PATH_U13+"idToken="+pIdToken+"&cle="+pKey+"&idSong="+pIdSong+"&publique="+pIsPublic;
+        new DownloadJSONAsyncTask(this , ACTION_U13 , request );
     }
     public void createPlaylist(int pIdToken ,String pKey ,String pName ,boolean pIsPublic ,boolean pIsActive) {
+        Log.e("DataManager", "createPlaylist("+pIdToken+","+pKey+","+pName+","+pIsPublic+","+pIsActive+")");
+        String request = SERVER_PATH_U3+"idToken="+pIdToken+"&cle="+pKey+"&cle="+pKey+"&nom="+pName+"&publique="+pIsPublic+"&active="+pIsActive;
+        new DownloadJSONAsyncTask(this , ACTION_U3 , request );
+    }
+    public void getPublicPlaylist(int pIdToken ,String pKey ,int pIdPlaylist ) {
+        Log.e("DataManager", "getPublicPlaylist("+pIdToken+","+pKey+","+pIdPlaylist+")");
+        String request = SERVER_PATH_P2+"idToken="+pIdToken+"&cle="+pKey+"&idPlaylist="+pIdPlaylist;
+        new DownloadJSONAsyncTask(this , ACTION_P2 , request );
 
     }
     public void getPrivatePlaylist(int pIdToken ,String pKey ,int pIdPlaylist ) {
-
+        Log.e("DataManager", "getPrivatePlaylist("+pIdToken+","+pKey+","+pIdPlaylist+")");
+        String request = SERVER_PATH_U4+"idToken="+pIdToken+"&cle="+pKey+"&idPlaylist="+pIdPlaylist;
+        new DownloadJSONAsyncTask(this , ACTION_U4 , request );
     }
-    public void modifyPlaylist(int pIdToken,String pKey,String pName ,boolean pIsPublic ,boolean pIsActive ) {
-
+    public void modifyPlaylist(int pIdToken ,String pKey ,int	pIdPlaylist ,String pName ,boolean pIsPublic ,boolean pIsActive ) {
+        Log.e("DataManager", "modifyPlaylist("+pIdToken+","+pKey+","+pName+","+pIsPublic+","+pIsActive+")");
+        String request = SERVER_PATH_U5+"idToken="+pIdToken+"&cle="+pKey+"&idPlaylist="+pIdPlaylist+"&nom="+pName+"&publique="+pIsPublic+"&active="+pIsActive;
+        new DownloadJSONAsyncTask(this , ACTION_U5 , request );
     }
     public void setPlaylistName(int pIdToken ,String pKey ,String pName ) {
 
