@@ -1,4 +1,4 @@
-package com.example.alexandrearsenault.projetfinal;
+package com.example.alexandrearsenault.projetfinal.Activity;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
 import com.example.alexandrearsenault.projetfinal.Modele.Musique;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
+import com.example.alexandrearsenault.projetfinal.R;
 
 import java.util.List;
 
