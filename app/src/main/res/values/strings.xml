@@ -19,6 +19,23 @@
     <string name="lbl_nemu_public_song">Public Playlist</string>
 
 
+    <!--            start            -->
+    <string name="lbl_start_welcome">Projet Final</string>
+    <string name="lbl_start_btn_connect">Connection</string>
+    <string name="lbl_start_btn_create">Créer un compte</string>
+    <string name="lbl_start_btn_watch">Consultation anonyme</string>
+
+    <!--            login            -->
+    <string name="lbl_login_email">Courriel</string>
+    <string name="lbl_login_pswd">Mot de passe</string>
+    <string name="lbl_login_pswd_see">Voir/ Cacher</string>
+    <string name="lbl_login_btn_login">Connection</string>
+    <string name="lbl_login_btn_create">Pas membre? Création</string>
+
+    <!--            logoff            -->
+
+
+
     <!--         create user         -->
     <string name="lbl_create1_info">Création de compte</string>
     <string name="lbl_create1_email">Entrer votre email</string>
@@ -36,18 +53,16 @@
     <string name="lbl_create2_btn_send">Confirmer</string>
     <string name="title_activity_login">Sign in</string>
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
+
+    <!--            profile            -->
+    <string name="lbl_profile_btn_edit">Modifier</string>
+    <string name="lbl_profile_nb_song">Nombre de musique</string>
+    <string name="lbl_profile_nb_playlist">Nombre de ListeDeLecture</string>
+
+
+    <!--            song            -->
+    <string name="lbl_song_btn_edit">Modifier</string>
+    <string name="lbl_song_btn_done">Enregistrer</string>
 
 
 </resources>

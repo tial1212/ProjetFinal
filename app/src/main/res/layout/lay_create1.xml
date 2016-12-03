@@ -45,7 +45,7 @@
                 android:text="msg error"
                 android:id="@+id/lbl_create1_error"
                 android:layout_gravity="center_horizontal"
-                android:textSize="32sp"
+                android:textSize="12sp"
                 android:layout_weight="2"
                 android:textColor="@android:color/holo_red_dark"/>
 
@@ -66,7 +66,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/lbl_create1_email"
                 android:id="@+id/lbl_create1_email"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:layout_gravity="left"
                 android:layout_weight="1" />
 
@@ -75,12 +75,12 @@
                 android:layout_height="match_parent"
                 android:inputType="text"
                 android:id="@+id/txt_create1_email"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:enabled="true"
                 android:layout_gravity="right"
                 android:background="#b5b7b6"
                 android:layout_weight="3"
-                android:maxLength="3" />
+                android:maxLength="50" />
 
         </LinearLayout>
         <LinearLayout
@@ -98,7 +98,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/lbl_create1_alias"
                 android:id="@+id/lblAddMoney2"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:layout_gravity="left"
                 android:layout_weight="1" />
 
@@ -107,12 +107,12 @@
                 android:layout_height="match_parent"
                 android:inputType="text"
                 android:id="@+id/txt_create1_alias"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:enabled="true"
                 android:layout_gravity="right"
                 android:background="#b5b7b6"
                 android:layout_weight="3"
-                android:maxLength="3" />
+                android:maxLength="50" />
 
         </LinearLayout>
         <LinearLayout
@@ -130,7 +130,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/lbl_create1_psdw1"
                 android:id="@+id/lbl_create1_pswd1"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:layout_gravity="left"
                 android:layout_weight="1" />
 
@@ -139,7 +139,7 @@
                 android:layout_height="match_parent"
                 android:inputType="textPassword"
                 android:id="@+id/txt_create1_pswd1"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:enabled="true"
                 android:layout_gravity="right"
                 android:background="#b5b7b6"
@@ -163,7 +163,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="@string/lbl_create1_pswd2"
                 android:id="@+id/lbl_create1_pswd2"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:layout_gravity="left"
                 android:layout_weight="1" />
 
@@ -172,7 +172,7 @@
                 android:layout_height="match_parent"
                 android:inputType="textPassword"
                 android:id="@+id/txt_create1_pswd2"
-                android:textSize="32sp"
+                android:textSize="22sp"
                 android:enabled="true"
                 android:layout_gravity="right"
                 android:background="#b5b7b6"
@@ -180,6 +180,7 @@
                 android:maxLength="50" />
 
         </LinearLayout>
+
 
 
         <LinearLayout
@@ -200,12 +201,13 @@
                 android:textSize="32sp"
                 android:layout_gravity="center"
                 android:layout_weight="1" />
-            <CheckBox android:id="@+id/checkbox_cheese"
+            <CheckBox
+                android:id="@+id/chk_create1_avatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:onClick="onCheckboxClicked"/>
+                android:layout_gravity="center"/>
             <Button
+                android:id="@+id/btn_create1_avatar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_create1_btn_avatar" />
@@ -223,10 +225,10 @@
             android:layout_weight="1">
 
             <Button
+                android:id="@+id/btn_create1_create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/lbl_create1_btn_send"
-                android:id="@+id/button" />
+                android:text="@string/lbl_create1_btn_send" />
 
         </LinearLayout>
 

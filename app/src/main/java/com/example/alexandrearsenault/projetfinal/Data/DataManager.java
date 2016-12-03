@@ -21,7 +21,7 @@ import java.util.List;
  * Created by alexandrearsenault on 2016-09-13.
  */
 public class DataManager {
-    private static final String SERVER_PATH = "http://424t.cgodin.qc.ca:8480//rest-example/";
+    private static final String SERVER_PATH = "http://207.162.80.103:8480/rest-example";
     private static final String SERVER_PATH_A1    = SERVER_PATH + "/service/token/getActionToken?";
     private static final String SERVER_PATH_A2    = SERVER_PATH + "/service/utilisateur/login?";
     private static final String SERVER_PATH_A3    = SERVER_PATH + "/service/utilisateur/logoff?";
@@ -58,7 +58,7 @@ public class DataManager {
     private static final int ACTION_A3      = 3;
     private static final int ACTION_P1_1    = 4;
     private static final int ACTION_P1_2    = 5;
-    private static final int ACTION_U2 = 6;
+    private static final int ACTION_U2      = 6;
     private static final int ACTION_U1      = 7;
     private static final int ACTION_U8      = 8;
     private static final int ACTION_U9_U10  = 9;
@@ -114,29 +114,42 @@ public class DataManager {
 
 
     public Token jsonToToken(String pJson){
+
+        Log.e("jsonToToken 1 ", "" );
+
+
+        Log.e("jsonToToken 6 ", "" );
+        /*
         try {
+
             JSONObject  jsonObjFilm = new JSONObject(pJson);
             if (jsonObjFilm == null ){ throw  new JSONException("NULL recieved"); }
-
             Integer id          = (Integer) jsonObjFilm.get("Id");
-            String  captchaStr  = (String)  jsonObjFilm.get("Etat");
-            String  action      = (String)  jsonObjFilm.get("Etat");
-            Boolean etat        = (Boolean) jsonObjFilm.get("Etat");
-            String  salt        = (String)  jsonObjFilm.get("Id");
+            String  captchaStr  = (String)  jsonObjFilm.get("captchaStr");
+            String  action      = (String)  jsonObjFilm.get("action");
+            String  couriel      = (String)  jsonObjFilm.get("Courriel");
+            Boolean etat        = (Boolean) jsonObjFilm.get("etat");
+            String  salt        = (String)  jsonObjFilm.get("salt");
 
             Token token =new Token();
             if (id != null )        { token.setId(id); }
             if (captchaStr != null ){ token.setCaptchaStr(captchaStr); }
             if (action != null )    { token.setAction(action); }
+            if (couriel != null )   { token.setEMail(couriel); }
             if (salt != null )      { token.setSalt(salt); }
             if (etat != null )      { token.setEtat(etat); }
 
-            return token;
+
+
+
         } catch (JSONException e) {
-            Log.e("DataManager.jsonToToken","ERROR CASTING");
+            Log.e("DataMgr.jsonToToken XX ","ERROR CASTING");
             e.printStackTrace();
             return  null;
         }
+        */
+
+        return new Token(true,"testing");
     }
     public Utilisateur jsonToUser(String pJson){
         try {
@@ -339,9 +352,9 @@ public class DataManager {
         String request = SERVER_PATH_A3+"idToken="+pIdToken+"&cle="+pKey+"&courriel="+pCourriel;
         new DownloadJSONAsyncTask(this , ACTION_A3 , request ).execute();
     }
-    public void createUser (String pAalias ,String pMotDePasse ,String pCourriel ,int pIdAvatar) {
-        Log.e("DataManager", "createUser("+pAalias+","+pMotDePasse+","+pCourriel+","+pIdAvatar+")");
-        String request = SERVER_PATH_P1_1+"alias="+pAalias+"&motDePasse="+pMotDePasse+"&courriel="+pCourriel+"&avatar="+pIdAvatar;
+    public void createUser (String pAlias ,String pMotDePasse ,String pCourriel ,int pIdAvatar) {
+        Log.e("DataManager", "createUser("+pAlias+","+pMotDePasse+","+pCourriel+","+pIdAvatar+")");
+        String request = SERVER_PATH_P1_1+"alias="+pAlias+"&motDePasse="+pMotDePasse+"&courriel="+pCourriel+"&avatar="+pIdAvatar;
         new DownloadJSONAsyncTask(this , ACTION_P1_1 , request ).execute();
     }
     public void confirmCreateUser(int pIdToken ,String pCaptchaVal) {
@@ -448,15 +461,19 @@ public class DataManager {
     }
     //********************************************  SONG PLAYLIST  ********************************************//
     public void onDoneDownloadingJson(String pResultJSON, int pAction) {
+        Log.e("DataManager", "onDoneDownloadingJson("+pAction+")");
         switch (pAction){
             case ACTION_A2:
                 //login()
+                Token t = this.jsonToToken(pResultJSON);
+                activity.userControler.onLoginAnswer(  t );
                 break;
             case ACTION_A3:
                 //logoff()
                 break;
             case ACTION_P1_1:
                 //createUser()
+                activity.userControler.onCreateAnswer( this.jsonToToken(pResultJSON));
                 break;
             case ACTION_P1_2:
                 //confirmCreateUser()
