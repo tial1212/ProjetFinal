@@ -51,6 +51,11 @@ public class DataManager {
     //private static final String SERVER_PATH_U16   = SERVER_PATH + "";
     //private static final String SERVER_PATH_U17   = SERVER_PATH + "";
     //private static final String SERVER_PATH_U18   = SERVER_PATH + "";
+    private static final String SERVER_PATH_A8    = SERVER_PATH + "/service/avatar/getAvatar?";
+    private static final String SERVER_PATH_A9    = SERVER_PATH + "/service/avatar/getAvatarList?";
+
+
+
 
 
     private static final int ACTION_A1      = 1;
@@ -82,6 +87,8 @@ public class DataManager {
     //private static final int ACTION_U16     = 27;
     //private static final int ACTION_U17     = 28;
     //private static final int ACTION_U18     = 29;
+    private static final int ACTION_A8      = 30;
+    private static final int ACTION_A9      = 31;
 
     private static  DataManager instance = null;
     private HomeActivity activity;
@@ -110,47 +117,113 @@ public class DataManager {
     }
 
 
-
-
-
-    public Token jsonToToken(String pJson){
-
-        Log.e("jsonToToken 1 ", "" );
-
-
-        Log.e("jsonToToken 6 ", "" );
-        /*
+    public Token tititata(String pJson){
         try {
-
             JSONObject  jsonObjFilm = new JSONObject(pJson);
             if (jsonObjFilm == null ){ throw  new JSONException("NULL recieved"); }
-            Integer id          = (Integer) jsonObjFilm.get("Id");
-            String  captchaStr  = (String)  jsonObjFilm.get("captchaStr");
-            String  action      = (String)  jsonObjFilm.get("action");
-            String  couriel      = (String)  jsonObjFilm.get("Courriel");
+            Integer id          = (Integer) jsonObjFilm.get("id");
+            //String  captchaStr  = (String)  jsonObjFilm.get("captchaStr");
+            //String  action      = (String)  jsonObjFilm.get("action");
+            //String  couriel      = (String)  jsonObjFilm.get("Courriel");
             Boolean etat        = (Boolean) jsonObjFilm.get("etat");
-            String  salt        = (String)  jsonObjFilm.get("salt");
+            //String  salt        = (String)  jsonObjFilm.get("salt");
 
             Token token =new Token();
             if (id != null )        { token.setId(id); }
-            if (captchaStr != null ){ token.setCaptchaStr(captchaStr); }
-            if (action != null )    { token.setAction(action); }
-            if (couriel != null )   { token.setEMail(couriel); }
-            if (salt != null )      { token.setSalt(salt); }
+            //if (captchaStr != null ){ token.setCaptchaStr(captchaStr); }
+            //if (action != null )    { token.setAction(action); }
+            //if (couriel != null )   { token.setEMail(couriel); }
+            //if (salt != null )      { token.setSalt(salt); }
             if (etat != null )      { token.setEtat(etat); }
-
-
-
+            return token;
 
         } catch (JSONException e) {
             Log.e("DataMgr.jsonToToken XX ","ERROR CASTING");
             e.printStackTrace();
             return  null;
         }
-        */
-
-        return new Token(true,"testing");
     }
+
+    public void onDoneDownloadingJson(String pResultJSON, int pAction) {
+        Log.e("DataManager", "onDoneDownloadingJson("+pAction+")");
+        Log.e("DataManager", "onDoneDownloadingJson("+pResultJSON+")");
+        switch (pAction){
+            case ACTION_A2:
+                //login()
+                Token t = this.tititata(pResultJSON);
+                activity.userControler.onLoginAnswer( t );
+                break;
+            case ACTION_A3:
+                //logoff()
+                break;
+            case ACTION_P1_1:
+                //createUser()
+                //activity.userControler.onCreateAnswer( this.jsonToToken(pResultJSON));
+                break;
+            case ACTION_P1_2:
+                //confirmCreateUser()
+                break;
+            case ACTION_U2:
+                //getUser()
+                break;
+            case ACTION_U1:
+                //modifierUser()
+                break;
+            case ACTION_U8:
+                //createSong()
+                break;
+            case ACTION_U9_U10:
+                //getPrivateSong()
+                break;
+            case ACTION_P3_P4:
+                //getPublicSong()
+                break;
+            case ACTION_U11:
+                //modifySong()
+                break;
+            case ACTION_U12:
+                //setActiveSong()
+                break;
+            case ACTION_U13:
+                //setPublicSong()
+                break;
+            case ACTION_U3:
+                //createPlaylist()
+                break;
+            case ACTION_P2:
+                //getPublicPlaylist()
+                break;
+            case ACTION_U4:
+                //getPrivatePlaylist()
+                break;
+            case ACTION_U5:
+                //modifyPlaylist()
+                break;
+            case ACTION_U5_1:
+                //setPlaylistName()
+                break;
+            case ACTION_U6:
+                //setPlaylistActive()
+                break;
+            case ACTION_U7:
+                //setPlaylistPublic()
+                break;
+            case ACTION_A4:
+                //getMyPlaylists()
+                break;
+            case ACTION_A5:
+                //getPublicPlaylistList()
+                break;
+            case ACTION_A6:
+                //getMySongs()
+                break;
+            case ACTION_A7:
+                //getPublicSongsList()
+                break;
+        }
+    }
+
+
     public Utilisateur jsonToUser(String pJson){
         try {
             JSONObject  jsonObjUser = new JSONObject(pJson);
@@ -459,85 +532,19 @@ public class DataManager {
         String request = SERVER_PATH_A5+"idToken="+pIdToken+"&cle="+pKey+"&premier="+pFirst+"&dernier="+pLast;;
         new DownloadJSONAsyncTask(this , ACTION_A5 , request ).execute();
     }
-    //********************************************  SONG PLAYLIST  ********************************************//
-    public void onDoneDownloadingJson(String pResultJSON, int pAction) {
-        Log.e("DataManager", "onDoneDownloadingJson("+pAction+")");
-        switch (pAction){
-            case ACTION_A2:
-                //login()
-                Token t = this.jsonToToken(pResultJSON);
-                activity.userControler.onLoginAnswer(  t );
-                break;
-            case ACTION_A3:
-                //logoff()
-                break;
-            case ACTION_P1_1:
-                //createUser()
-                activity.userControler.onCreateAnswer( this.jsonToToken(pResultJSON));
-                break;
-            case ACTION_P1_2:
-                //confirmCreateUser()
-                break;
-            case ACTION_U2:
-                //getUser()
-                break;
-            case ACTION_U1:
-                //modifierUser()
-                break;
-            case ACTION_U8:
-                //createSong()
-                break;
-            case ACTION_U9_U10:
-                //getPrivateSong()
-                break;
-            case ACTION_P3_P4:
-                //getPublicSong()
-                break;
-            case ACTION_U11:
-                //modifySong()
-                break;
-            case ACTION_U12:
-                //setActiveSong()
-                break;
-            case ACTION_U13:
-                //setPublicSong()
-                break;
-            case ACTION_U3:
-                //createPlaylist()
-                break;
-            case ACTION_P2:
-                //getPublicPlaylist()
-                break;
-            case ACTION_U4:
-                //getPrivatePlaylist()
-                break;
-            case ACTION_U5:
-                //modifyPlaylist()
-                break;
-            case ACTION_U5_1:
-                //setPlaylistName()
-                break;
-            case ACTION_U6:
-                //setPlaylistActive()
-                break;
-            case ACTION_U7:
-                //setPlaylistPublic()
-                break;
-            case ACTION_A4:
-                //getMyPlaylists()
-                break;
-            case ACTION_A5:
-                //getPublicPlaylistList()
-                break;
-            case ACTION_A6:
-                //getMySongs()
-                break;
-            case ACTION_A7:
-                //getPublicSongsList()
-                break;
-        }
-
+    //********************************************  AVATAR  ********************************************//
+    public void getAvatar(int pIdToken ,String pKey ,int pIdAvatar ) {
+        Log.e("DataManager", "getPublicPlaylistList("+pIdToken+","+pKey+","+pIdAvatar+")");
+        String request = SERVER_PATH_A8+"idToken="+pIdToken+"&cle="+pKey+"&idAvatar="+pIdAvatar;;
+        new DownloadJSONAsyncTask(this , ACTION_A8 , request ).execute();
     }
+    public void getAvatarList(int pIdToken ,String pKey ,int pFirst ,int pLast) {
+        Log.e("DataManager", "getPublicPlaylistList("+pIdToken+","+pKey+","+pFirst+","+pLast+")");
+        String request = SERVER_PATH_A9+"idToken="+pIdToken+"&cle="+pKey+"&premier="+pFirst+"&dernier="+pLast;;
+        new DownloadJSONAsyncTask(this , ACTION_A9 , request ).execute();
+    }
+    //********************************************  SONG PLAYLIST  ********************************************//
+
 }
 
 

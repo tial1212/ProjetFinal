@@ -11,9 +11,7 @@ import com.example.alexandrearsenault.projetfinal.Modele.Token;
  * Created by alexandrearsenault on 2016-12-01.
  */
 
-public class SongControler
-        implements
-        fgrSong.OnSongListener {
+public class SongControler {
 
     private final DataManager dataMgr;
     private final HomeActivity activity;
@@ -33,8 +31,8 @@ public class SongControler
     }
 
 
-    @Override
-    public void onSongModifySend( int pIdSong, String pTitle, String pArtist, String pCoverArt, boolean pIsPublic, boolean pIsActive) {
+
+    public void sendModifySong( int pIdSong, String pTitle, String pArtist, String pCoverArt, boolean pIsPublic, boolean pIsActive) {
         Token t = dataMgr.getActionToken(activity.email);
         dataMgr.modifySong(t.getId() ,t.getSalt() ,pIdSong,pTitle,pTitle,pCoverArt,pIsPublic,pIsActive);
     }
@@ -44,5 +42,7 @@ public class SongControler
     }
 
 
-
+    public void onDoneSelectingSong(Musique s) {
+        //TODO
+    }
 }

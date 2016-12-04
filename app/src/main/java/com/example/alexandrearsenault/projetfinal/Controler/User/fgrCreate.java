@@ -12,6 +12,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
 import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
 import com.example.alexandrearsenault.projetfinal.R;
@@ -24,14 +25,15 @@ public class fgrCreate
         extends
             Fragment {
 
+    private static final int ID_AVATAR_DEFAULT = -4; //FIXME
+    private static final String NAME_AVATAR_DEFAULT = "TITI"; //FIXME
 
     private View view;
-    private OnCreateListener listener;
+    private int selectedAvatar = ID_AVATAR_DEFAULT;
+    private boolean chkChecked = false;
 
 
-    public interface OnCreateListener {
-        void onCreateSend(String pAlias , String pMotDePasse , String pCourriel , int pIdAvatar);
-    }
+
 
 
     public void setError(String pError) {
@@ -42,18 +44,27 @@ public class fgrCreate
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.lay_create1, container, false);
 
-        Button bntCreer = (Button) view.findViewById(R.id.btn_create1_create);
+        final Button bntCreer = (Button) view.findViewById(R.id.btn_create1_create);
         bntCreer.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
             validateBeforeSend();
         } });
-        Button bntAvatar = (Button) view.findViewById(R.id.btn_create1_avatar);
+        final Button bntAvatar = (Button) view.findViewById(R.id.btn_create1_avatar);
         bntAvatar.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-
+            ((HomeActivity) getActivity() ).userControler.setFgr( );
         } });
 
         CheckBox chk = (CheckBox) view.findViewById(R.id.chk_create1_avatar);
         chk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() { @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+            chkChecked = isChecked;
+            if (chkChecked ){
+                bntAvatar.setEnabled(true);
+                bntAvatar.setText(NAME_AVATAR_DEFAULT);
+                selectedAvatar = ID_AVATAR_DEFAULT;
+            }
+            else{
+                bntAvatar.setEnabled(true);
+                selectedAvatar = ID_AVATAR_DEFAULT;
+            }
         } }  );
 
         return view ;
@@ -66,6 +77,7 @@ public class fgrCreate
         String alias = ((EditText) view.findViewById(R.id.txt_create1_alias)).getText().toString();
         String psdw1 = ((EditText) view.findViewById(R.id.txt_create1_pswd1)).getText().toString();
         String psdw2 = ((EditText) view.findViewById(R.id.txt_create1_pswd2)).getText().toString();
+        int idAvatar = (chkChecked?selectedAvatar:ID_AVATAR_DEFAULT);
 
         //TODO remove testing only
         alias = "alexqqq";
@@ -77,7 +89,7 @@ public class fgrCreate
         boolean okPswd1 = Utilisateur.validatePasowrd(psdw1);
         boolean okPswdMatch = psdw1.equals(psdw2 );
         if (okEmail && okAlias && okPswd1 && okPswdMatch ){
-            DataManager.getInstance().createUser(alias,psdw1,email,1);//FIXME
+            ((HomeActivity) getActivity()).userControler.sendCreateUser(alias,psdw1,email,1);//FIXME
         }else{
             String error = (okEmail     ?"":" Email non valide");
             error+=        (okAlias     ?"":" Alias non valide");
@@ -88,19 +100,7 @@ public class fgrCreate
     }
 
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnCreateListener) {
-            listener = (OnCreateListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement 'OnCreateListener' ");
-        }
-    }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        listener = null;
-    }
+
+
 }

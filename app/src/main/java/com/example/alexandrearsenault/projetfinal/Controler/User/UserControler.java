@@ -3,19 +3,20 @@ package com.example.alexandrearsenault.projetfinal.Controler.User;
 
 import android.app.Fragment;
 import android.util.Log;
+import android.view.View;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
+import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
+
+import static android.R.attr.id;
 
 /**
  * Created by alexandrearsenault on 2016-12-01.
  */
 
-public class UserControler
-        implements
-            fgrCreate.OnCreateListener,
-            fgrLogin.OnLoginListener{
+public class UserControler  {
 
 
     DataManager         dataMgr;
@@ -61,10 +62,10 @@ public class UserControler
     }
 
 
-    @Override
-    public void onCreateSend(String pAlias , String pMotDePasse , String pCourriel , int pIdAvatar){
+    public void sendCreateUser(String pAlias ,String pMotDePasse ,String pCourriel ,int pIdAvatar){
         dataMgr.createUser( pAlias , pMotDePasse , pCourriel , pIdAvatar);
     }
+
     public void onCreateAnswer(Token token) {
         if (token.getEtat() ){
             activity.changeFragment( new fgrConfirmCreate() );
@@ -74,23 +75,48 @@ public class UserControler
         }
     }
 
-    @Override
-    public void onLoginSend(String pEMail, String pMotDePasse) {
-        dataMgr.login(pEMail,pMotDePasse);
-    }
 
+
+    public void sendLogin(String pCourriel, String pMotDePasse){
+        Log.e("UserControler","sendLogin");
+        dataMgr.login(pCourriel, pMotDePasse);
+    }
 
 
     public void onLoginAnswer(Token token) {
         Log.e("onLoginAnswer",token.toString());
+
         if (token == null ){
             Log.e("onLoginAnswer","Token null");
-        } else if (token.getEtat() ){
-            activity.isUserConnected = true;
-            activity.changeFragment( new fgrProfile() );
+        }else if (activity.action == activity.ACT_CONNECT_INIT){
+            if (token.getEtat() ){
+                activity.changeFragment( new fgrProfile() );
+            }else{
+                activity.email=null;
+                activity.pswd=null;
+                activity.changeFragment( new fgrStart() );
+                activity.action = activity.ACT_START;
+            }
+
+
+        }else if (activity.action == activity.ACT_CONNECT){
+            if (token.getEtat() ){
+                activity.changeFragment( new fgrProfile() );
+            }else{
+                fgrLogin.setError( token.getAction() );
+            }
         }
-        else {
-            fgrLogin.setError( token.getAction() );
+    }
+
+
+    public void onDoneSelectingAvatar(Avatar pAvatar){
+        Log.e("UserControler","onDoneSelectingAvatar");
+        switch (activity.action) {
+            case activity.ACT_AVATAR_CREATE :
+                fgrCreate.
+            case activity.ACT_AVATAR_MODIFY :
+                id = R.layout.lay_avatar_content;
+                break;
         }
     }
 

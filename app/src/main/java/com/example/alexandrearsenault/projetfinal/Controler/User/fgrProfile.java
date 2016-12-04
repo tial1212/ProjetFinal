@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.alexandrearsenault.projetfinal.R;
 
@@ -18,13 +19,15 @@ import com.example.alexandrearsenault.projetfinal.R;
 public class fgrProfile extends Fragment {
 
 
-    private boolean isEditing;
 
     private View view;
 
 
-     EditText avatarEdit ;
+     EditText aliasEdit ;
+     TextView emailText ;
+
      ImageButton btnImgAvatar;
+     Button       btnEdit;
 
 
 
@@ -42,33 +45,37 @@ public class fgrProfile extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.lay_profile, container, false);
-        avatarEdit = (EditText)view.findViewById(R.id.lbl_profile_alias);
-        btnImgAvatar = (ImageButton) view.findViewById(R.id.img_profile_avatar);
-
-        isEditing = false;
 
 
+        aliasEdit = (EditText)view.findViewById(R.id.lbl_profile_alias);
+        emailText = (TextView)view.findViewById(R.id.txt_profile_email);
+
+
+
+        btnEdit = (Button) view.findViewById(R.id.btn_profile_edit);
+        btnEdit.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
+
+        } });
+        btnImgAvatar = (ImageButton) view.findViewById(R.id.btnImg_profile_avatar);
         btnImgAvatar.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-
+            //select avatar
         } });
 
-
-        Button bntEdit = (Button) view.findViewById(R.id.btn_profile_edit);
-        bntEdit.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-            isEditing = !isEditing;
-
-            btnImgAvatar.setActivated(isEditing);
-            avatarEdit.setActivated(isEditing);
-
-
-        } });
+        edit(false);
 
         return view ;
     }
 
 
-    private void activate() {
-        btnImgAvatar.setActivated(isEditing);
-        avatarEdit.setActivated(isEditing);
+    private void edit(boolean isEditing ) {
+
+        if (isEditing){
+            btnImgAvatar.setActivated(true);
+            btnImgAvatar.setActivated(isEditing);
+        }
+        else{
+            //send for modification
+        }
+
     }
 }

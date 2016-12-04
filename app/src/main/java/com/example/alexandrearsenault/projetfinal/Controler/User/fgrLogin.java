@@ -30,7 +30,7 @@ public class fgrLogin extends Fragment {
     }
 
     public void setError(String action) {
-
+        view.findViewById(R.id.lbl_login_error);
     }
 
 

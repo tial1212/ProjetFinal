@@ -1,4 +1,4 @@
-package com.example.alexandrearsenault.projetfinal.Controler;
+package com.example.alexandrearsenault.projetfinal.Controler.Playlist;
 
 import android.app.Fragment;
 import android.os.Bundle;

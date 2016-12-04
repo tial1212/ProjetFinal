@@ -15,10 +15,9 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 
+import com.example.alexandrearsenault.projetfinal.Controler.List.ListControler;
 import com.example.alexandrearsenault.projetfinal.Controler.Song.SongControler;
 import com.example.alexandrearsenault.projetfinal.Controler.User.UserControler;
-import com.example.alexandrearsenault.projetfinal.Controler.User.fgrCreate;
-import com.example.alexandrearsenault.projetfinal.Controler.User.fgrLogin;
 import com.example.alexandrearsenault.projetfinal.Controler.User.fgrProfile;
 import com.example.alexandrearsenault.projetfinal.Controler.User.fgrStart;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
@@ -37,11 +36,20 @@ public class HomeActivity extends AppCompatActivity
         implements
         NavigationView.OnNavigationItemSelectedListener {
 
+    public static final int ACT_CONNECT_INIT = 1;
+    public static final int ACT_CONNECT = 2;
+    public static final int ACT_START = 3;
+    public static final int ACT_PROFILE = 4;
+    public static final int ACT_AVATAR_CREATE = 5;
+    public static final int ACT_AVATAR_MODIFY = 6;
+    public int action;
+
 
     //keep login identifiant
     public String email;
     public String pswd;
-    private boolean isUserConnected;
+    public boolean isUserConnected;
+
 
     //keep requested object
     private Token actionToken;
@@ -52,10 +60,8 @@ public class HomeActivity extends AppCompatActivity
     private DataManager dataMgr;
     public UserControler userControler;
     public SongControler songControler;
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
+    public ListControler listControler;
+
     private GoogleApiClient client;
 
     @Override
@@ -95,12 +101,10 @@ public class HomeActivity extends AppCompatActivity
         //try to connect
         isUserConnected = false;
         email = "tial1212@gmail.com";
-        pswd = "Alex123@";
-        userControler.onLoginSend(email, pswd);
+        pswd = "Alex123@"; //TODO remove
+        action = ACT_CONNECT_INIT;
+        userControler.sendLogin( email,pswd);
 
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
@@ -149,7 +153,7 @@ public class HomeActivity extends AppCompatActivity
 
 
     private void goToProfile() {
-        Log.e("goToProfile", " connected" + isUserConnected);
+        Log.e("goToProfile", " connected : " + isUserConnected);
         if (isUserConnected) {
             userControler.setFgr(new fgrProfile());
         } else {
@@ -168,15 +172,7 @@ public class HomeActivity extends AppCompatActivity
         ft.commit();
     }
 
-    public void connect(boolean pIsConnected) {
 
-        this.isUserConnected = pIsConnected;
-        if ( isUserConnected ) {
-
-        } else {
-
-        }
-    }
 
 
 
