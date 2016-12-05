@@ -32,7 +32,6 @@ public class UserControler  {
     public UserControler(HomeActivity pHomeActivity, DataManager pDataMgr) {
         activity = pHomeActivity;
         dataMgr =  pDataMgr;
-
     }
 
 
@@ -58,9 +57,7 @@ public class UserControler  {
             fgrProfile = (fgrProfile) pFragment;
             activity.changeFragment( pFragment );
         }
-
     }
-
 
     public void sendCreateUser(String pAlias ,String pMotDePasse ,String pCourriel ,int pIdAvatar){
         dataMgr.createUser( pAlias , pMotDePasse , pCourriel , pIdAvatar);
@@ -112,10 +109,10 @@ public class UserControler  {
     public void onDoneSelectingAvatar(Avatar pAvatar){
         Log.e("UserControler","onDoneSelectingAvatar");
         switch (activity.action) {
-            case activity.ACT_AVATAR_CREATE :
-                fgrCreate.
-            case activity.ACT_AVATAR_MODIFY :
-                id = R.layout.lay_avatar_content;
+            case HomeActivity.ACT_AVATAR_CREATE:
+                fgrCreate.setAvatar( pAvatar);
+            case HomeActivity.ACT_AVATAR_MODIFY :
+                fgrProfile.setAvatar( pAvatar);
                 break;
         }
     }

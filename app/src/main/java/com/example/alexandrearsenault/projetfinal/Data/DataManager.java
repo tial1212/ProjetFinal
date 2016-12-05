@@ -117,32 +117,7 @@ public class DataManager {
     }
 
 
-    public Token tititata(String pJson){
-        try {
-            JSONObject  jsonObjFilm = new JSONObject(pJson);
-            if (jsonObjFilm == null ){ throw  new JSONException("NULL recieved"); }
-            Integer id          = (Integer) jsonObjFilm.get("id");
-            //String  captchaStr  = (String)  jsonObjFilm.get("captchaStr");
-            //String  action      = (String)  jsonObjFilm.get("action");
-            //String  couriel      = (String)  jsonObjFilm.get("Courriel");
-            Boolean etat        = (Boolean) jsonObjFilm.get("etat");
-            //String  salt        = (String)  jsonObjFilm.get("salt");
 
-            Token token =new Token();
-            if (id != null )        { token.setId(id); }
-            //if (captchaStr != null ){ token.setCaptchaStr(captchaStr); }
-            //if (action != null )    { token.setAction(action); }
-            //if (couriel != null )   { token.setEMail(couriel); }
-            //if (salt != null )      { token.setSalt(salt); }
-            if (etat != null )      { token.setEtat(etat); }
-            return token;
-
-        } catch (JSONException e) {
-            Log.e("DataMgr.jsonToToken XX ","ERROR CASTING");
-            e.printStackTrace();
-            return  null;
-        }
-    }
 
     public void onDoneDownloadingJson(String pResultJSON, int pAction) {
         Log.e("DataManager", "onDoneDownloadingJson("+pAction+")");
@@ -150,8 +125,7 @@ public class DataManager {
         switch (pAction){
             case ACTION_A2:
                 //login()
-                Token t = this.tititata(pResultJSON);
-                activity.userControler.onLoginAnswer( t );
+                activity.userControler.onLoginAnswer( this.jsonToToken(pResultJSON) );
                 break;
             case ACTION_A3:
                 //logoff()
@@ -198,6 +172,7 @@ public class DataManager {
                 break;
             case ACTION_U5:
                 //modifyPlaylist()
+                activity.playlistControler.onModifyPlaylistAnswer( this.jsonToToken(pResultJSON) );
                 break;
             case ACTION_U5_1:
                 //setPlaylistName()
@@ -220,6 +195,34 @@ public class DataManager {
             case ACTION_A7:
                 //getPublicSongsList()
                 break;
+        }
+    }
+
+
+    public Token jsonToToken(String pJson){
+        try {
+            JSONObject  jsonObjFilm = new JSONObject(pJson);
+            if (jsonObjFilm == null ){ throw  new JSONException("NULL recieved"); }
+            Integer id          = (Integer) jsonObjFilm.get("id");
+            //String  captchaStr  = (String)  jsonObjFilm.get("captchaStr");
+            //String  action      = (String)  jsonObjFilm.get("action");
+            //String  couriel      = (String)  jsonObjFilm.get("Courriel");
+            Boolean etat        = (Boolean) jsonObjFilm.get("etat");
+            //String  salt        = (String)  jsonObjFilm.get("salt");
+
+            Token token =new Token();
+            if (id != null )        { token.setId(id); }
+            //if (captchaStr != null ){ token.setCaptchaStr(captchaStr); }
+            //if (action != null )    { token.setAction(action); }
+            //if (couriel != null )   { token.setEMail(couriel); }
+            //if (salt != null )      { token.setSalt(salt); }
+            if (etat != null )      { token.setEtat(etat); }
+            return token;
+
+        } catch (JSONException e) {
+            Log.e("DataMgr.jsonToToken XX ","ERROR CASTING");
+            e.printStackTrace();
+            return  null;
         }
     }
 
@@ -410,6 +413,20 @@ public class DataManager {
                 Log.e("DataManager.getAcToken", "ERROR Unknown");
             }
             return null;
+        }
+    }
+
+
+    public boolean askToExecuteAction() {
+        Token token = this.getActionToken(activity.email);
+        if (token != null && token.getEtat() == true){
+            activity.actionToken = token;
+            return true;
+        }
+        else {
+            activity.actionToken = null;
+            //TODO toast error
+            return false;
         }
     }
 

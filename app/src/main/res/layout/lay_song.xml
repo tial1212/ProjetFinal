@@ -89,6 +89,13 @@
                 android:text="@string/lbl_song_btn_edit"
                 android:textStyle="bold" />
 
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:textAlignment="center"
+                android:gravity="center"
+                android:id="@+id/lbl_song_error"/>
+
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

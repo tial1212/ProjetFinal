@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.widget.LinearLayout;
 
 import com.example.alexandrearsenault.projetfinal.Controler.List.ListControler;
+import com.example.alexandrearsenault.projetfinal.Controler.Playlist.PlaylistControler;
 import com.example.alexandrearsenault.projetfinal.Controler.Song.SongControler;
 import com.example.alexandrearsenault.projetfinal.Controler.User.UserControler;
 import com.example.alexandrearsenault.projetfinal.Controler.User.fgrProfile;
@@ -24,6 +25,7 @@ import com.example.alexandrearsenault.projetfinal.Data.DataManager;
 import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
 import com.example.alexandrearsenault.projetfinal.Modele.Musique;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
+import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
 import com.example.alexandrearsenault.projetfinal.R;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -48,21 +50,22 @@ public class HomeActivity extends AppCompatActivity
     //keep login identifiant
     public String email;
     public String pswd;
+    public Utilisateur user;
     public boolean isUserConnected;
 
 
     //keep requested object
-    private Token actionToken;
-    private Musique song;
-    private ListesDeLecture playlist;
-    private List<Musique> playlistContent;
+    public Token actionToken;
 
     private DataManager dataMgr;
+
     public UserControler userControler;
     public SongControler songControler;
     public ListControler listControler;
+    public PlaylistControler playlistControler;
 
     private GoogleApiClient client;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +99,8 @@ public class HomeActivity extends AppCompatActivity
         dataMgr = DataManager.getInstance(this);
         userControler = new UserControler(this, dataMgr);
         songControler = new SongControler(this,dataMgr);
+        listControler = new ListControler(this,dataMgr);
+        playlistControler = new PlaylistControler(this,dataMgr);
 
 
         //try to connect
@@ -141,10 +146,11 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_public_playlist:
                 Log.e("menu", " public playlist");
-                //
+                dataMgr.getActionToken(email);
+                //dataMgr.getPublicPlaylist( ........ ........ .......... ........);
                 break;
             default:
-                Log.e("menu", " other");
+                Log.e("menu", " action undefined");
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -177,15 +183,6 @@ public class HomeActivity extends AppCompatActivity
 
 
 
-
-
-
-
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
                 .setName("Home Page") // TODO: Define a title for the content shown.
@@ -201,9 +198,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
         AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
@@ -211,9 +205,6 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
     }

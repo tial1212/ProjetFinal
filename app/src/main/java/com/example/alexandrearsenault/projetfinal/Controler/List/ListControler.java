@@ -1,14 +1,18 @@
 package com.example.alexandrearsenault.projetfinal.Controler.List;
 
+import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
+import com.example.alexandrearsenault.projetfinal.Data.DataManager;
+import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
 import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
+import com.example.alexandrearsenault.projetfinal.Modele.Musique;
+
+import java.util.List;
 
 /**
  * Created by alexandrearsenault on 2016-12-01.
  */
 
 public class ListControler {
-
-    private static ListControler instance = null;
 
 
     private static final int ACTION_MY_MUSIC        = 1;
@@ -17,22 +21,36 @@ public class ListControler {
     private static final int ACTION_PUBLIC_PLAYLIST = 4;
 
     private static int action;
+    private final DataManager dataMgr;
+    private final HomeActivity activity;
 
-    public ListControler(int pAction) {
-        if (pAction < 1 || pAction > 4){  throw new RuntimeException("ListControler cannot be initiated w/ ation="+pAction);  }
-        action = pAction;
+    public fgrList fgrList;
+
+    public ListControler(HomeActivity pHomeActivity, DataManager pDataMgr) {
+        activity = pHomeActivity;
+        dataMgr =  pDataMgr;
+        fgrList = new fgrList();
     }
 
 
-    public void onDoneSelectingSong(ListesDeLecture p) {
-        //TODO
+
+    public void onAvatarAnswer(List<Avatar> pList) {
+        fgrList.showListAvatar(pList);
+    }
+    public void onPlaylistAnswer(List<ListesDeLecture> pList) {
+        fgrList.showListPlaylist(pList);
+    }
+    public void onSongAnswer(List<Musique> pList) {
+        fgrList.showListSong(pList);
+    }
+
+
+
+    public void onDoneSelectingSong(Musique s) {
+        activity.songControler.setFgr( s );
     }
 
     public void onDoneSelectingPlaylist(ListesDeLecture p) {
-        //TODO
-    }
-
-    public void onDoneSelectingPlaylist(ListesDeLecture p) {
-        //TODO
+        activity.playlistControler.setFgr( p );
     }
 }

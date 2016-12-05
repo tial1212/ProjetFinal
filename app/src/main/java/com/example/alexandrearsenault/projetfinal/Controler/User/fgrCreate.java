@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
+import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
 import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
 import com.example.alexandrearsenault.projetfinal.R;
 
@@ -25,15 +26,14 @@ public class fgrCreate
         extends
             Fragment {
 
-    private static final int ID_AVATAR_DEFAULT = -4; //FIXME
+    private static final int ID_AVATAR_DEFAULT      = -4;    //FIXME
     private static final String NAME_AVATAR_DEFAULT = "TITI"; //FIXME
 
     private View view;
     private int selectedAvatar = ID_AVATAR_DEFAULT;
     private boolean chkChecked = false;
 
-
-
+    Button bntAvatar;
 
 
     public void setError(String pError) {
@@ -48,22 +48,22 @@ public class fgrCreate
         bntCreer.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
             validateBeforeSend();
         } });
-        final Button bntAvatar = (Button) view.findViewById(R.id.btn_create1_avatar);
+        bntAvatar = (Button) view.findViewById(R.id.btn_create1_avatar);
         bntAvatar.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-            ((HomeActivity) getActivity() ).userControler.setFgr( );
+            // send avatar request
         } });
 
         CheckBox chk = (CheckBox) view.findViewById(R.id.chk_create1_avatar);
         chk.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() { @Override public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             chkChecked = isChecked;
+            bntAvatar.setEnabled(chkChecked);
             if (chkChecked ){
-                bntAvatar.setEnabled(true);
                 bntAvatar.setText(NAME_AVATAR_DEFAULT);
                 selectedAvatar = ID_AVATAR_DEFAULT;
             }
             else{
-                bntAvatar.setEnabled(true);
                 selectedAvatar = ID_AVATAR_DEFAULT;
+                bntAvatar.setText(NAME_AVATAR_DEFAULT);
             }
         } }  );
 
@@ -100,7 +100,8 @@ public class fgrCreate
     }
 
 
-
-
-
+    public void setAvatar(Avatar pAvatar) {
+        selectedAvatar = pAvatar.getId();
+        bntAvatar.setText( pAvatar.getName() );
+    }
 }

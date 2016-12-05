@@ -26,6 +26,7 @@ import static java.lang.Math.E;
 public class fgrList extends Fragment {
 
     private View view;
+    private RecyclerView recyclerView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -33,27 +34,28 @@ public class fgrList extends Fragment {
         return view ;
     }
 
-    private void showList(List<Objects> pList){
-        Log.e("fgrList","showList()");
 
-        if ( !pList.isEmpty() && ( ((Object) pList.get(0)) instanceof Avatar
-                || ((Object) pList.get(0)) instanceof ListesDeLecture
-                || ((Object) pList.get(0)) instanceof Musique ) ) {
-            Log.e("fgrList","showList()->type de liste inconue");
-            return;
-        }
 
+
+
+    public void showListAvatar(List<Avatar> pList){
+        showList();
+        recyclerView.setAdapter(new ListRecycler(  (List<Avatar>)((List<?>) pList ) , ((HomeActivity)getActivity()) ));
+    }
+
+    public void showListPlaylist(List<ListesDeLecture> pList){
+        showList();
+        recyclerView.setAdapter(new ListRecycler(  (List<ListesDeLecture>)((List<?>) pList ) , ((HomeActivity)getActivity()) , false ));
+    }
+
+    public void showListSong(List<Musique> pList){
+        showList();
+        recyclerView.setAdapter(new ListRecycler(  (List<Musique>)((List<?>) pList ) , ((HomeActivity)getActivity()) , 1 ));
+    }
+
+    private void showList(){
         getActivity().setContentView(R.layout.lay_list);
-        RecyclerView recyclerView = (RecyclerView) getActivity().findViewById(R.id.rec_view_list); //FIXME
+        recyclerView = (RecyclerView) getActivity().findViewById(R.id.rec_view_list); //FIXME
         assert recyclerView != null;
-        if(!pList.isEmpty() && ((Object) pList.get(0)) instanceof Avatar){
-            recyclerView.setAdapter(new ListRecycler(  (List<Avatar>)((List<?>) pList ) , ((HomeActivity)getActivity()) ));
-        }
-        else if(!pList.isEmpty() && ((Object) pList.get(0)) instanceof ListesDeLecture){
-            recyclerView.setAdapter(new ListRecycler(  (List<ListesDeLecture>)((List<?>) pList ) , ((HomeActivity)getActivity()) , false ));
-        }
-        else if(!pList.isEmpty() && ((Object) pList.get(0)) instanceof Musique ){
-            recyclerView.setAdapter(new ListRecycler(  (List<Musique>)((List<?>) pList ) , ((HomeActivity)getActivity()) , 1 ));
-        }
     }
 }

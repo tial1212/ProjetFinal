@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
+import com.example.alexandrearsenault.projetfinal.Modele.Token;
 import com.example.alexandrearsenault.projetfinal.R;
 
 /**
@@ -29,12 +31,6 @@ public class fgrProfile extends Fragment {
      ImageButton btnImgAvatar;
      Button       btnEdit;
 
-
-
-    public interface OnCreateListener {
-        void onCreateSend(String pAlias, String pMotDePasse, String pCourriel, int pIdAvatar);
-    }
-
     public void setError(String action) {
         // see if avatar invalid or alias invalid
 
@@ -50,11 +46,9 @@ public class fgrProfile extends Fragment {
         aliasEdit = (EditText)view.findViewById(R.id.lbl_profile_alias);
         emailText = (TextView)view.findViewById(R.id.txt_profile_email);
 
-
-
         btnEdit = (Button) view.findViewById(R.id.btn_profile_edit);
         btnEdit.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-
+            // enable shit
         } });
         btnImgAvatar = (ImageButton) view.findViewById(R.id.btnImg_profile_avatar);
         btnImgAvatar.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
@@ -76,6 +70,22 @@ public class fgrProfile extends Fragment {
         else{
             //send for modification
         }
-
     }
+
+
+
+
+    public void onDoneUpdating(Token pToken) {
+        if (pToken.getEtat() == true ){
+
+        } else {
+
+        }
+    }
+
+
+    public void setAvatar(Avatar pAvatar) {
+        //btnImgAvatar.setImageBitmap( pAvatar.getAvatar() ); FIXME
+    }
+
 }

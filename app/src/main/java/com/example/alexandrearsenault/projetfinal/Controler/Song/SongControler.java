@@ -16,6 +16,8 @@ public class SongControler {
     private final DataManager dataMgr;
     private final HomeActivity activity;
 
+    public fgrSong fg;
+
     public SongControler(HomeActivity pHomeActivity, DataManager pDataMgr) {
         activity = pHomeActivity;
         dataMgr =  pDataMgr;
@@ -25,7 +27,7 @@ public class SongControler {
 
     public void setFgr(Musique pSong) {
         Log.e("SongControler","setFgr");
-        fgrSong fg = new fgrSong();
+        fg = new fgrSong();
         fg.setMusic(pSong);
         activity.changeFragment( fg );
     }
