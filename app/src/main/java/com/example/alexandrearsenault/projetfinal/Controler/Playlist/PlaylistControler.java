@@ -33,10 +33,7 @@ public class PlaylistControler {
 
 
     public void sendModifyPlaylist(int	pIdPlaylist ,String pName ,boolean pIsPublic ,boolean pIsActive ) {
-        if ( dataMgr.askToExecuteAction() ){
-            dataMgr.modifyPlaylist(activity.actionToken.getId(), activity.pswd ,  pIdPlaylist , pName , pIsPublic , pIsActive ); //TODO fix internal method
-        }
-
+            dataMgr.modifyPlaylist(  pIdPlaylist , pName , pIsPublic , pIsActive );
     }
 
     public void onModifyPlaylistAnswer(Token token) {

@@ -100,7 +100,7 @@ public class fgrCreate
     }
 
 
-    public void setAvatar(Avatar pAvatar) {
+    public void onDoneSelectingAvatar(Avatar pAvatar) {
         selectedAvatar = pAvatar.getId();
         bntAvatar.setText( pAvatar.getName() );
     }

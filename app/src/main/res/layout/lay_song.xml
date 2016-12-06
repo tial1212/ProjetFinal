@@ -90,11 +90,12 @@
                 android:textStyle="bold" />
 
             <TextView
+                android:id="@+id/lbl_song_error"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:textAlignment="center"
                 android:gravity="center"
-                android:id="@+id/lbl_song_error"/>
+                />
 
         </LinearLayout>
     </ScrollView>

@@ -3,14 +3,13 @@ package com.example.alexandrearsenault.projetfinal.Controler.User;
 
 import android.app.Fragment;
 import android.util.Log;
-import android.view.View;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
 import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
+import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
 
-import static android.R.attr.id;
 
 /**
  * Created by alexandrearsenault on 2016-12-01.
@@ -86,19 +85,23 @@ public class UserControler  {
         if (token == null ){
             Log.e("onLoginAnswer","Token null");
         }else if (activity.action == activity.ACT_CONNECT_INIT){
-            if (token.getEtat() ){
+            activity.action = -1;
+            boolean ok = token.getEtat();
+            if (ok ){
+
                 activity.changeFragment( new fgrProfile() );
             }else{
-                activity.email=null;
-                activity.pswd=null;
-                activity.changeFragment( new fgrStart() );
-                activity.action = activity.ACT_START;
+
+                activity.connect(false ,  null );
+
             }
 
 
         }else if (activity.action == activity.ACT_CONNECT){
+            activity.action = -1;
             if (token.getEtat() ){
                 activity.changeFragment( new fgrProfile() );
+
             }else{
                 fgrLogin.setError( token.getAction() );
             }
@@ -106,13 +109,14 @@ public class UserControler  {
     }
 
 
+
     public void onDoneSelectingAvatar(Avatar pAvatar){
         Log.e("UserControler","onDoneSelectingAvatar");
         switch (activity.action) {
             case HomeActivity.ACT_AVATAR_CREATE:
-                fgrCreate.setAvatar( pAvatar);
+                fgrCreate.onDoneSelectingAvatar( pAvatar);
             case HomeActivity.ACT_AVATAR_MODIFY :
-                fgrProfile.setAvatar( pAvatar);
+                fgrProfile.onDoneSelectingAvatar( pAvatar);
                 break;
         }
     }

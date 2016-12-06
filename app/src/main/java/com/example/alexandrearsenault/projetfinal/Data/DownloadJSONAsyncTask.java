@@ -3,6 +3,19 @@ package com.example.alexandrearsenault.projetfinal.Data;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -52,48 +65,54 @@ public class DownloadJSONAsyncTask extends AsyncTask<Void, Void, String> {
             //TODO jet json w/ PUT
 
 
-        } catch (Exception e) {
+            URL url = new URL(pUrl);
+            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+            httpCon.setDoOutput(true);
+            httpCon.setRequestMethod("PUT");
+
+
+            StringBuffer sb = new StringBuffer();
+            InputStream is = null;
+
+            try {
+                is = new BufferedInputStream(httpCon.getInputStream());
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String inputLine = "";
+                while ((inputLine = br.readLine()) != null) {
+                    sb.append(inputLine);
+                }
+                result = sb.toString();
+            }
+            catch (Exception e) {
+                Log.i(TAG, "Error reading InputStream");
+                result = null;
+            }
+            finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    }
+                    catch (IOException e) {
+                        Log.i(TAG, "Error closing InputStream");
+                    }
+                }
+            }
+
+
+
+
+
+    } catch (Exception e) {
             Log.e("readJSONfromUrl","ERROR");
             e.printStackTrace();
         }
 
-        Log.e("readJSONfromUrl","result = "+result);
-        return "{ \"action\": \"login failled\",   \"id\": 0,   \"etat\": false }";
+        Log.e("readJSONfromUrl","result :: "+result);
+
+        return result;
+        //return "{ \"action\": \"login failled\",   \"id\": 0,   \"etat\": false }";
 
 
-    /*
-        HttpURLConnection c = null;
-        try {
-            URL u = new URL(pUrl);
-            c = (HttpURLConnection) u.openConnection();
-            c.connect();
-            int status = c.getResponseCode();
-            switch (status) {
-                case 200:
-                case 201:
-                    BufferedReader br = new BufferedReader(new InputStreamReader(c.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line+"\n");
-                    }
-                    br.close();
-                    return sb.toString();
-            }
-        } catch (Exception ex) {  return ex.toString(); }
-
-        finally {
-            if (c != null) {
-                try { c.disconnect(); }
-                catch (Exception ex) {    }
-            }
-        }
-
-        Log.e("DownloadJSONAsyncTask","ERROR read json");
-
-        return null;
-
-*/
 
 
     }

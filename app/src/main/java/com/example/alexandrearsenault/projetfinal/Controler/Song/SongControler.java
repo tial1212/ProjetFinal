@@ -33,17 +33,6 @@ public class SongControler {
     }
 
 
-
-    public void sendModifySong( int pIdSong, String pTitle, String pArtist, String pCoverArt, boolean pIsPublic, boolean pIsActive) {
-        Token t = dataMgr.getActionToken(activity.email);
-        dataMgr.modifySong(t.getId() ,t.getSalt() ,pIdSong,pTitle,pTitle,pCoverArt,pIsPublic,pIsActive);
-    }
-
-    public void onSongModifyAnswer( Token token) {
-
-    }
-
-
     public void onDoneSelectingSong(Musique s) {
         //TODO
     }

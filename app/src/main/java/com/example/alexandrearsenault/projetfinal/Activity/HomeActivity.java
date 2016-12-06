@@ -48,14 +48,8 @@ public class HomeActivity extends AppCompatActivity
 
 
     //keep login identifiant
-    public String email;
-    public String pswd;
     public Utilisateur user;
-    public boolean isUserConnected;
-
-
-    //keep requested object
-    public Token actionToken;
+    private boolean isUserConnected;
 
     private DataManager dataMgr;
 
@@ -105,10 +99,11 @@ public class HomeActivity extends AppCompatActivity
 
         //try to connect
         isUserConnected = false;
-        email = "tial1212@gmail.com";
-        pswd = "Alex123@"; //TODO remove
+        user = new Utilisateur();
+        user.setEMaill( "tial1212@gmail.com");
+        user.setPasowrd( "Alex123@"); //TODO remove
         action = ACT_CONNECT_INIT;
-        userControler.sendLogin( email,pswd);
+        userControler.sendLogin( user.getEMaill() , user.getPasowrd() );
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
@@ -122,6 +117,47 @@ public class HomeActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+
+    /**
+     *
+     * CASE 1  t , user  --> show profile
+     * CASE 3  f , null  --> disconect, show start
+     *
+     * @param connected
+     * @param pUser
+     */
+    public void connect(boolean connected , Utilisateur pUser) {
+        //TODO
+        if (connected && pUser != null){
+            user = pUser;
+            action = -1;
+        }
+        else if (!connected ) {
+            this.isUserConnected = false;
+            this.user =null;
+            this.changeFragment( new fgrStart() );
+            action = -1;
+        }
+    }
+
+
+    public boolean isUserConnected(){
+        return isUserConnected;
+    }
+
+
+    public void onUserAnswer(Utilisateur pUser) {
+        if (pUser != null){
+
+        }
+        else {
+
+
+        }
+    }
+
+
 
 
     @Override
@@ -146,7 +182,6 @@ public class HomeActivity extends AppCompatActivity
                 break;
             case R.id.nav_public_playlist:
                 Log.e("menu", " public playlist");
-                dataMgr.getActionToken(email);
                 //dataMgr.getPublicPlaylist( ........ ........ .......... ........);
                 break;
             default:
@@ -164,7 +199,6 @@ public class HomeActivity extends AppCompatActivity
             userControler.setFgr(new fgrProfile());
         } else {
             fgrStart fgr = new fgrStart();
-            fgr.setActivity(this);
             userControler.setFgr(fgr);
         }
     }

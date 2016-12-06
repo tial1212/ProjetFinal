@@ -23,10 +23,6 @@ public class fgrStart extends Fragment {
     private View view;
 
 
-    public void setActivity(HomeActivity pHomeActivity) {
-        activity = pHomeActivity;
-    }
-
 
     public interface OnPageLoginListener {
         void onCreateSend(String pAlias, String pMotDePasse, String pCourriel, int pIdAvatar);
@@ -36,12 +32,11 @@ public class fgrStart extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.lay_start, container, false);
-
-
+        activity = (HomeActivity) getActivity();
 
         Button bntConnect = (Button) view.findViewById(R.id.btn_start_connect);
         bntConnect.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-            activity.userControler.setFgr(new fgrLogin() );
+            ((HomeActivity) getActivity()).userControler.setFgr(new fgrLogin() );
         } });
         Button bntCreate = (Button) view.findViewById(R.id.btn_start_create);
         bntCreate.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
