@@ -8,8 +8,12 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
+import java.net.URLConnection;
 
 
 /**
@@ -47,54 +51,67 @@ public class DownloadJSONAsyncTask extends AsyncTask<Void, Void, String> {
      *
      * @return fluxJSON OR null
      */
-    public static String readJSONfromUrl(String pUrl, String pRequestType) {
+    public String readJSONfromUrl(String pUrl, String pRequestType) {
         Log.e("readJSONfromUrl","pUrl = "+pUrl);
-        String result="";
+        String result = "";
+
+        InputStream is = null;
+        // Only display the first 102400 characters of the retrieved
+        // web page content.
+        int len = 1024 * 8;
+
         try {
             URL url = new URL(pUrl);
-            HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-            //httpCon.setDoOutput(true);
-            httpCon.setRequestMethod( pRequestType );
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setRequestMethod(pRequestType);
+            conn.setDoInput(true);
+            // Starts the query
+            conn.connect();
+            int response = conn.getResponseCode();
+            Log.d("SELF-DEBUG", "The server response is: " + response);
+            is = conn.getInputStream();
 
-            StringBuffer sb = new StringBuffer();
-            InputStream is = null;
+            // Convert the InputStream into a string
+            result = readIt(is, len);
 
-            try {
-                is = new BufferedInputStream(httpCon.getInputStream());
-                BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                String inputLine = "";
-                while ((inputLine = br.readLine()) != null) {
-                    sb.append(inputLine);
-                }
-                result = sb.toString();
-            }
-            catch (Exception e) {
-                Log.e("catch", "Error reading InputStream");
-                Log.i("catch", ""+e.getLocalizedMessage()  );
-                result = null;
-            }
-            finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    }
-                    catch (IOException e) {
-                        Log.e("catch", "Error closing InputStream");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            Log.e("readJSONfromUrl","ERROR");
+            // Makes sure that the InputStream is closed after the app is
+            // finished using it.
+        } catch (ProtocolException e) {
             e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (is != null) try {
+                is.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         Log.e("readJSONfromUrl","result = "+result);
         return result;
 
 
-
-
     }
+
+
+    // Reads an InputStream and converts it to a String.
+    public static  String readIt(InputStream stream, int len) throws IOException, UnsupportedEncodingException {
+            String result = "";
+            InputStreamReader reader = null;
+            reader = new InputStreamReader(stream, "UTF-8");
+            char[] buffer = new char[len];
+            while(reader.read(buffer) >= 0)
+            {
+            result = result + (new String(buffer));
+            buffer = new char[len];
+            }
+            return result;
+            }
 
 
 

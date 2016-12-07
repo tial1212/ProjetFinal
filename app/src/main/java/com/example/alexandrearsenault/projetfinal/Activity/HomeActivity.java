@@ -120,7 +120,7 @@ public class HomeActivity extends AppCompatActivity
         Log.e("read value = ",user.getEMaill() );
 
         action = ACT_CONNECT_AUTO;
-        userControler.sendLogin( user.getEMaill() , user.getPasowrd() );
+        dataMgr.login( user.getEMaill() , user.getPasowrd() );
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
@@ -145,11 +145,13 @@ public class HomeActivity extends AppCompatActivity
      * @param pUser
      */
     public void connect(boolean connected , Utilisateur pUser) {
-        Log.e("HomeActivity.connect()", ""+(pUser!=null?connected+pUser.toString():"") );
+        Log.e("HomeActivity.connect", "("+connected+" , "+(pUser!=null?pUser.toString():"")+")" );
         if (connected && pUser != null){
             user = pUser;
             drawer.setInfo( user.getAlias(),user.getEMaill() );
             action = ACT_NONE;
+            isUserConnected = true;
+            this.changeFragment( new fgrProfile() );
         }
         else if (!connected ) {
             this.isUserConnected = false;
@@ -227,8 +229,7 @@ public class HomeActivity extends AppCompatActivity
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()
-                .setName("Home Page") // TODO: Define a title for the content shown.
-                // TODO: Make sure this auto-generated URL is correct.
+                .setName("Home Page")
                 .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
                 .build();
         return new Action.Builder(Action.TYPE_VIEW)

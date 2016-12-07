@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 /**
@@ -33,7 +34,7 @@ public class DataManager {
     private static final String SERVER_PATH_A3    = SERVER_PATH + "/service/utilisateur/logoff?";
     private static final String SERVER_PATH_P1_1  = SERVER_PATH + "/service/utilisateur/createUser?";
     private static final String SERVER_PATH_P1_2  = SERVER_PATH + "/service/utilisateur/confirmCreateUser?";
-    private static final String SERVER_PATH_U2    = SERVER_PATH + "/service/utilisateur/getUser";  //NEW
+    private static final String SERVER_PATH_U2    = SERVER_PATH + "/service/utilisateur/getUser?";  //NEW
     private static final String SERVER_PATH_U1    = SERVER_PATH + "/service/utilisateur/modify?";
     private static final String SERVER_PATH_A10   = SERVER_PATH + "/service/utilisateur/nbSong?";//NEW
     private static final String SERVER_PATH_A11   = SERVER_PATH + "/service/utilisateur/nbPlaylist?";//NEW
@@ -110,14 +111,6 @@ public class DataManager {
         }
         return instance;
     }
-
-    /**
-     * BE CAREFUL
-     * <p>
-     * make sure it has been initiare or return null
-     *
-     * @return instance
-     */
     public static DataManager getInstance() {
         return instance;
     }
@@ -134,33 +127,38 @@ public class DataManager {
         switch (pAction){
             case ACTION_A2:
                 //login()
-                activity.userControler.onLoginAnswer( this.jsonToToken(pResultJSON) );
+                activity.userControler.onLoginAnswer( ObjectConvertor.jsonToToken(pResultJSON) );
                 break;
             case ACTION_A3:
                 //logoff()
                 break;
             case ACTION_P1_1:
                 //createUser()
-                activity.userControler.onCreateAnswer( this.jsonToToken(pResultJSON));
+                activity.userControler.onCreateAnswer( ObjectConvertor.jsonToToken(pResultJSON));
                 break;
             case ACTION_P1_2:
                 //confirmCreateUser()
                 break;
             case ACTION_U2:
                 //getUser()
+                Log.e("DataManager", "getUser()");
                 Utilisateur alex = new Utilisateur();
                 alex.setEMaill(HomeActivity.emailTest);
                 alex.setPasowrd(HomeActivity.pswdTest);
+                alex.setAlias("tial");
                 activity.userControler.onUserAnswer( alex );
                 break;
             case ACTION_U1:
                 //modifierUser()
+                activity.userControler.onModifyUserAnswer( ObjectConvertor.jsonToToken(pResultJSON)  );
                 break;
             case ACTION_A10:
                 //getUserNbSong()
+                activity.userControler.onUserNbSongAnswer(  ObjectConvertor.jsonToInteger(pResultJSON) );
                 break;
             case ACTION_A11:
                 //getUserNbPlaylist()
+                activity.userControler.onUserNbPlaylistAnswer(  ObjectConvertor.jsonToInteger(pResultJSON) );
                 break;
             case ACTION_U8:
                 //createSong()
@@ -191,7 +189,7 @@ public class DataManager {
                 break;
             case ACTION_U5:
                 //modifyPlaylist()
-                activity.playlistControler.onModifyPlaylistAnswer( this.jsonToToken(pResultJSON) );
+                activity.playlistControler.onModifyPlaylistAnswer( ObjectConvertor.jsonToToken(pResultJSON) );
                 break;
             case ACTION_U5_1:
                 //setPlaylistName()
@@ -218,185 +216,7 @@ public class DataManager {
     }
 
 
-    public Token jsonToToken(String pJson){
-        try {
-            JSONObject  jsonObjToken = new JSONObject(pJson);
-            if (jsonObjToken == null ){ throw  new JSONException("NULL recieved"); }
 
-            Token token = new Token();
-            try {token.setId(           (Integer) jsonObjToken.get("id")        ); } catch (Exception e){ }
-            try {token.setCaptchaStr(   (String)  jsonObjToken.get("captchaStr")); } catch (Exception e){ }
-            try {token.setAction(       (String)  jsonObjToken.get("action")   ) ; } catch (Exception e){ }
-            try {token.setEMail(        (String)  jsonObjToken.get("Courriel") ) ; } catch (Exception e){ }
-            try {token.setEtat(         (Boolean) jsonObjToken.get("etat")     ) ; } catch (Exception e){ }
-            try {token.setSalt(         (String)  jsonObjToken.get("salt")     ) ; } catch (Exception e){ }
-
-            return token;
-
-        } catch (JSONException e) {
-            Log.e("DataMgr.jsonToToken() ","ERROR CASTING");
-            e.printStackTrace();
-            return  null;
-        }
-    }
-
-
-    public Utilisateur jsonToUser(String pJson){
-        try {
-            JSONObject  jsonObjUser = new JSONObject(pJson);
-            if (jsonObjUser == null ){ throw  new JSONException("NULL recieved"); }
-
-            Integer id          = (Integer) jsonObjUser.get("Id");
-            Date    date        = (Date)    jsonObjUser.get("Date");
-            String  eMaill      = (String)  jsonObjUser.get("Etat");
-            String  pasword     = (String)  jsonObjUser.get("Etat");
-            Integer avatar      = (Integer) jsonObjUser.get("Id");
-            Boolean active      = (Boolean) jsonObjUser.get("Etat");
-
-            Utilisateur user =new Utilisateur();
-            if (id != null )         { user.setId(id); }
-            if (date != null )       { user.setDate(date); }
-            if (eMaill!= null )      { user.setEMaill(eMaill); }
-            if (pasword!= null )     { user.setPasowrd(pasword); }
-            if (avatar != null )     { user.setAvatar(avatar); }
-            if (active != null )     { user.setActive(active); }
-
-            return user;
-        } catch (JSONException e) {
-            Log.e("DataManager.jsonToSong","ERROR CASTING");
-            e.printStackTrace();
-            return  null;
-        }
-    }
-    public Musique jsonToSong(String pJson){
-        try {
-            JSONObject  jsonObjSong = new JSONObject(pJson);
-            if (jsonObjSong == null ){ throw  new JSONException("NULL recieved"); }
-
-            Integer id          = (Integer) jsonObjSong.get("Id");
-            Date    date        = (Date)    jsonObjSong.get("Date");
-            Integer owner       = (Integer) jsonObjSong.get("Etat");
-            String  title       = (String)  jsonObjSong.get("Etat");
-            String  artist      = (String)  jsonObjSong.get("Etat");
-            String  music       = (String)  jsonObjSong.get("Etat");
-            Boolean isActive    = (Boolean) jsonObjSong.get("Etat");
-            Boolean isPublic    = (Boolean) jsonObjSong.get("Etat");
-
-            Musique song =new Musique();
-            if (id != null )         { song.setId(id); }
-            if (date != null )       { song.setDate(date); }
-            if (owner != null )      { song.setOwner(owner); }
-            if (title != null )      { song.setTitle(title); }
-            if (artist != null )     { song.setArtist(artist); }
-            if (music != null )      { song.setMusic(music); }
-            if (isActive != null )   { song.setActive(isActive); }
-            if (isPublic != null )   { song.setPublic(isPublic); }
-
-            return song;
-        } catch (JSONException e) {
-            Log.e("DataManager.jsonToSong","ERROR CASTING");
-            e.printStackTrace();
-            return  null;
-        }
-    }
-    public List<Musique> jsonToListSong(String pJson){
-
-        try {
-            JSONArray jsonArraySong =   new JSONArray(pJson);
-            if (jsonArraySong == null || jsonArraySong.length() == 0 ){ throw  new JSONException("NULL recieved OR empty"); }
-            List<Musique> listSong =  new ArrayList<Musique>();
-
-            for (int i=0;i<jsonArraySong.length() ;i++){
-                JSONObject  jsonObjSong = new JSONObject((String) jsonArraySong.get(i));
-                Musique song =new Musique();
-
-                Integer id          = (Integer) jsonObjSong.get("Id");
-                Date    date        = (Date)    jsonObjSong.get("Date");
-                Integer owner       = (Integer) jsonObjSong.get("Proprietaire");
-                String  title       = (String)  jsonObjSong.get("Titre");
-                String  artist      = (String)  jsonObjSong.get("Artiste");
-                String  music       = (String)  jsonObjSong.get("Musique");
-                Boolean isActive    = (Boolean) jsonObjSong.get("Publique");
-                Boolean isPublic    = (Boolean) jsonObjSong.get("Active");
-
-                if (id != null )         { song.setId(id); }
-                if (date != null )       { song.setDate(date); }
-                if (owner != null )      { song.setOwner(owner); }
-                if (title != null )      { song.setTitle(title); }
-                if (artist != null )     { song.setArtist(artist); }
-                if (music != null )      { song.setMusic(music); }
-                if (isActive != null )   { song.setActive(isActive); }
-                if (isPublic != null )   { song.setPublic(isPublic); }
-                listSong.add(song );
-            }
-            return listSong;
-        } catch (JSONException e) {
-            Log.e("DataMgr.jsonToListSong","ERROR CASTING");
-            e.printStackTrace();
-            return  null;
-        }
-    }
-    public ListesDeLecture jsonToPlaylist(String pJson){
-        try {
-            JSONObject  jsonObjPlaylist = new JSONObject(pJson);
-            if (jsonObjPlaylist == null ){ throw  new JSONException("NULL recieved"); }
-
-            Integer id          = (Integer) jsonObjPlaylist.get("Id");
-            Date    date        = (Date)    jsonObjPlaylist.get("Date");
-            String  name        = (String)  jsonObjPlaylist.get("Nom");
-            Integer owner       = (Integer) jsonObjPlaylist.get("Proprietaire");
-            Boolean isActive    = (Boolean) jsonObjPlaylist.get("Publique");
-            Boolean isPublic    = (Boolean) jsonObjPlaylist.get("Active");
-
-            ListesDeLecture playlist =new ListesDeLecture();
-            if (id != null )         { playlist.setId(id); }
-            if (date != null )       { playlist.setDate(date); }
-            if (owner != null )      { playlist.setOwner(owner); }
-            if (name != null )       { playlist.setName(name); }
-            if (isActive != null )   { playlist.setActive(isActive); }
-            if (isPublic != null )   { playlist.setPublic(isPublic); }
-
-            return playlist;
-        } catch (JSONException e) {
-            Log.e("DataMgr.jsonToPlaylist","ERROR CASTING");
-            e.printStackTrace();
-            return  null;
-        }
-
-    }
-    public List<ListesDeLecture> jsonToListPlaylist(String pJson){
-        try {
-            JSONArray jsonArrayPlaylist =   new JSONArray(pJson);
-            if (jsonArrayPlaylist == null || jsonArrayPlaylist.length() == 0 ){ throw  new JSONException("NULL recieved OR empty"); }
-            List<ListesDeLecture> listPlaylist =  new ArrayList<ListesDeLecture>();
-
-            for (int i=0;i<jsonArrayPlaylist.length() ;i++) {
-                JSONObject jsonObjPlaylist = new JSONObject((String) jsonArrayPlaylist.get(i));
-                ListesDeLecture playlist =new ListesDeLecture();
-
-                Integer id          = (Integer) jsonObjPlaylist.get("Id");
-                Date    date        = (Date)    jsonObjPlaylist.get("Date");
-                String  name        = (String)  jsonObjPlaylist.get("Nom");
-                Integer owner       = (Integer) jsonObjPlaylist.get("Proprietaire");
-                Boolean isActive    = (Boolean) jsonObjPlaylist.get("Publique");
-                Boolean isPublic    = (Boolean) jsonObjPlaylist.get("Active");
-
-                if (id != null )         { playlist.setId(id); }
-                if (date != null )       { playlist.setDate(date); }
-                if (owner != null )      { playlist.setOwner(owner); }
-                if (name != null )       { playlist.setName(name); }
-                if (isActive != null )   { playlist.setActive(isActive); }
-                if (isPublic != null )   { playlist.setPublic(isPublic); }
-
-                listPlaylist.add( playlist );
-            }
-            return listPlaylist;
-        } catch (JSONException e) {
-            Log.e("DataMgr.jsonToPlaylist","ERROR CASTING");
-            e.printStackTrace();
-            return  null;
-        }
-    }
 
 
     /**
@@ -407,28 +227,27 @@ public class DataManager {
      */
     private Token getActionToken(String pEMail) {
         Log.e("DataManager", "getActionToken("+pEMail+")");
+        String request = SERVER_PATH_A1+"courriel="+pEMail ;
+        String json = null;
         try {
-            String request = SERVER_PATH_A1+"courriel="+pEMail ;
-            String json = DownloadJSONAsyncTask.readJSONfromUrl(request, "PUT");
-            JSONObject jsonObjFilm = new JSONObject(json);//FIXME
-            Token token = new Token();
-            token.setId((int) jsonObjFilm.get("Id") );
-            token.setEtat( (boolean) jsonObjFilm.get("Etat") );
-            String salt =  (String) jsonObjFilm.get("salt");
-            if (salt != null ){token.setSalt(salt);}
-            return token;
-        } catch (Exception e) {
-            if (e instanceof JSONException) {
-                Log.e("DataManager.getAcToken", "ERROR JSON cast");
-            } else if (e instanceof Exception) {
-                Log.e("DataManager.getAcToken", "ERROR Unknown");
-            }
-            return null;
+            json = new DownloadJSONAsyncTask(this,ACTION_A1,request).execute().get();
+            return ObjectConvertor.jsonToToken(json);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
         }
+        //String json = downJson.readJSONfromUrl(request, "PUT");
+
+        return null;
     }
 
 
+
+
     private boolean askToExecuteAction() {
+
+
         this.actionToken = this.getActionToken(activity.user.getEMaill() );
         if (this.actionToken != null && this.actionToken.getEtat() == true){
             return true;

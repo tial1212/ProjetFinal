@@ -59,6 +59,9 @@ public class fgrLogin extends Fragment {
         ((HomeActivity)getActivity()).action = HomeActivity.ACT_CONNECT;
         email = ((EditText) view.findViewById(R.id.lbl_login_email)).getText().toString();
         psdw = ((EditText) view.findViewById(R.id.lbl_login_pswd)).getText().toString();
+        //TODO remove
+        email = ((HomeActivity)getActivity()).user.getEMaill();
+        psdw = ((HomeActivity)getActivity()).user.getPasowrd();
         DataManager.getInstance().login(email , psdw);
     }
 

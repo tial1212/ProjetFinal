@@ -44,13 +44,6 @@ public class fgrProfile extends Fragment {
     String alias;
     int idAvatar;
 
-    public void setError(String action) {
-        // see if avatar invalid or alias invalid
-
-    }
-
-
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity = ((HomeActivity)getActivity());
@@ -66,7 +59,7 @@ public class fgrProfile extends Fragment {
             idAvatar = activity.user.getAvatar();
 
             //set known info
-            //aliasEdit.setText( activity.user.getAlias() );
+            this.aliasEdit.setText( activity.user.getAlias() );
             this.emailText.setText(activity.user.getEMaill() );
             this.nbPlaylistText.setText( "X");
             this.nbSongText.setText( "X" );
@@ -107,10 +100,8 @@ public class fgrProfile extends Fragment {
             btnImgAvatar.setActivated(isEditing);
             btnEdit.setText(   (editing? getString(R.string.lbl_profile_btn_save ) : getString(R.string.lbl_profile_btn_edit ) ) );
 
-        if (!editing ) {
+        if (!editing ) { //save
             alias = String.valueOf(aliasEdit.getText());
-
-
            if (validateProfile( alias ) ){
                DataManager.getInstance().modifierUser(activity.user.getEMaill() , activity.user.getPasowrd() , alias,this.idAvatar );
            }
@@ -131,8 +122,9 @@ public class fgrProfile extends Fragment {
             activity.user.setAvatar(idAvatar);
             activity.user.setAlias(alias);
         } else {
-            Toast.makeText(activity.getApplicationContext(), "Erreur de modification", Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity.getApplicationContext(), "Erreur de modification revert", Toast.LENGTH_SHORT).show();
             //revert
+            aliasEdit.setText(activity.user.getAlias() );
 
         }
     }

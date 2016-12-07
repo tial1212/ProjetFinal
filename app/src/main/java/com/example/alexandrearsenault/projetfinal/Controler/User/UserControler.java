@@ -4,6 +4,7 @@ package com.example.alexandrearsenault.projetfinal.Controler.User;
 import android.app.Fragment;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
@@ -49,6 +50,7 @@ public class UserControler {
         }
         if (pFragment instanceof fgrConfirmCreate){
             fgrConfirmCreate = (fgrConfirmCreate) pFragment;
+            //activity.action = HomeActivity.ACT_.....
             activity.changeFragment( pFragment );
         }
         if (pFragment instanceof fgrLogin){
@@ -67,22 +69,17 @@ public class UserControler {
 
 
     public void onCreateAnswer(Token token) {
-
         if (token.getEtat() ){
             activity.changeFragment( new fgrConfirmCreate() );
         }
         else {
-
             fgrCreate.setError( token.getAction() );
         }
     }
 
 
 
-    public void sendLogin(String pCourriel, String pMotDePasse){
-        Log.e("UserCtrl","sendLogin");
-        dataMgr.login(pCourriel, pMotDePasse);
-    }
+
 
 
     public void tryConnectFromLastSession(String pCourriel, String pMotDePasse){
@@ -93,7 +90,6 @@ public class UserControler {
 
     public void onLoginAnswer(Token pToken) {
         Log.e("UserCtrl.onLoginAnswer",pToken.toString());
-
         if (pToken == null ){
             Log.e("onLoginAnswer","Token null");
         }else if (activity.action == HomeActivity.ACT_CONNECT_AUTO){
@@ -117,14 +113,29 @@ public class UserControler {
 
 
     public void onUserAnswer(Utilisateur pUser) {
-        Log.e("UserCtrl.onUserAnswer",pUser.toString());
+        Log.e("UserCtrl.onUserAnswer(", (pUser!= null?pUser.toString() : "null" ) +")" );
         activity.action = HomeActivity.ACT_NONE ;
         if (pUser == null ){
             Log.e("onUserAnswer","Token null");
         }else{
             activity.connect(true , pUser);
-            activity.changeFragment( new fgrProfile() );
         }
+    }
+
+    public void onUserNbPlaylistAnswer(Integer pNbPlaylist) {
+        Log.e("UserCtrl.onUserAnswer", "("+pNbPlaylist +")" );
+        fgrProfile.onNbPlaylistAnswer(pNbPlaylist);
+    }
+
+    public void onUserNbSongAnswer(Integer pNbSong) {
+        Log.e("UserCtrl.onUserNbSgAns", "("+pNbSong +")" );
+        fgrProfile.onNbSongAnswer(pNbSong);
+    }
+
+
+
+    public void onModifyUserAnswer(Token pToken) {
+        fgrProfile.onEditAnswer(pToken);
     }
 
 
@@ -155,10 +166,4 @@ public class UserControler {
         activity.user.setPasowrd( settings.getString(PREFS_USER_PSWD,  "") );
 
     }
-
-
-
-
-
-
 }
