@@ -130,8 +130,7 @@ public class DataManager {
 
 
     public void onDoneDownloadingJson(String pResultJSON, int pAction) {
-        Log.e("DataManager", "onDoneDownloadingJson("+pAction+")");
-        Log.e("DataManager", "onDoneDownloadingJson("+pResultJSON+")");
+        Log.e("DataManager", "onDoneDownloadingJson("+pAction+","+pResultJSON+")");
         switch (pAction){
             case ACTION_A2:
                 //login()
@@ -142,13 +141,17 @@ public class DataManager {
                 break;
             case ACTION_P1_1:
                 //createUser()
-                //activity.userControler.onCreateAnswer( this.jsonToToken(pResultJSON));
+                activity.userControler.onCreateAnswer( this.jsonToToken(pResultJSON));
                 break;
             case ACTION_P1_2:
                 //confirmCreateUser()
                 break;
             case ACTION_U2:
                 //getUser()
+                Utilisateur alex = new Utilisateur();
+                alex.setEMaill(HomeActivity.emailTest);
+                alex.setPasowrd(HomeActivity.pswdTest);
+                activity.userControler.onUserAnswer( alex );
                 break;
             case ACTION_U1:
                 //modifierUser()
@@ -219,20 +222,15 @@ public class DataManager {
         try {
             JSONObject  jsonObjToken = new JSONObject(pJson);
             if (jsonObjToken == null ){ throw  new JSONException("NULL recieved"); }
-            Integer id          = (Integer) jsonObjToken.get("id");
-            //String  captchaStr  = (String)  jsonObjToken.get("captchaStr");
-            //String  action      = (String)  jsonObjToken.get("action");
-            //String  couriel      = (String)  jsonObjToken.get("Courriel");
-            Boolean etat        = (Boolean) jsonObjToken.get("etat");
-            //String  salt        = (String)  jsonObjToken.get("salt");
 
-            Token token =new Token();
-            if (id != null )        { token.setId(id); }
-            //if (captchaStr != null ){ token.setCaptchaStr(captchaStr); }
-            //if (action != null )    { token.setAction(action); }
-            //if (couriel != null )   { token.setEMail(couriel); }
-            //if (salt != null )      { token.setSalt(salt); }
-            if (etat != null )      { token.setEtat(etat); }
+            Token token = new Token();
+            try {token.setId(           (Integer) jsonObjToken.get("id")        ); } catch (Exception e){ }
+            try {token.setCaptchaStr(   (String)  jsonObjToken.get("captchaStr")); } catch (Exception e){ }
+            try {token.setAction(       (String)  jsonObjToken.get("action")   ) ; } catch (Exception e){ }
+            try {token.setEMail(        (String)  jsonObjToken.get("Courriel") ) ; } catch (Exception e){ }
+            try {token.setEtat(         (Boolean) jsonObjToken.get("etat")     ) ; } catch (Exception e){ }
+            try {token.setSalt(         (String)  jsonObjToken.get("salt")     ) ; } catch (Exception e){ }
+
             return token;
 
         } catch (JSONException e) {
@@ -411,7 +409,7 @@ public class DataManager {
         Log.e("DataManager", "getActionToken("+pEMail+")");
         try {
             String request = SERVER_PATH_A1+"courriel="+pEMail ;
-            String json = DownloadJSONAsyncTask.readJSONfromUrl(request);
+            String json = DownloadJSONAsyncTask.readJSONfromUrl(request, "PUT");
             JSONObject jsonObjFilm = new JSONObject(json);//FIXME
             Token token = new Token();
             token.setId((int) jsonObjFilm.get("Id") );
@@ -472,10 +470,12 @@ public class DataManager {
         String request = SERVER_PATH_P1_2+"idToken="+pIdToken+"&captchaVal="+pCaptchaVal;
         new DownloadJSONAsyncTask(this , ACTION_P1_2 , request ).execute();
     }
-    public void getUser(int pIdToken ,String pKey) {
-        Log.e("DataManager", "getUser("+pIdToken+","+pKey+")");
-        String request = SERVER_PATH_U2+"idToken="+pIdToken+"&cle="+pKey;
-        new DownloadJSONAsyncTask(this , ACTION_U2, request ).execute();
+    public void getUser() {
+        Log.e("DataManager", "getUser()");
+        if ( this.askToExecuteAction() ){
+            String request = SERVER_PATH_U2+this.getTokenPath();
+            new DownloadJSONAsyncTask(this , ACTION_U2, request ).execute();
+        }
     }
     public void modifierUser(String pEMaill,String pPasword,String pAlias,  int  pIdAvatar) {
         Log.e("DataManager", "modifierUser("+pEMaill+","+pPasword+","+pAlias+","+pIdAvatar+")");

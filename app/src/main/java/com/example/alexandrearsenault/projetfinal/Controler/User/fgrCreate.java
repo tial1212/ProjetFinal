@@ -2,7 +2,9 @@ package com.example.alexandrearsenault.projetfinal.Controler.User;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ public class fgrCreate
 
 
     public void setError(String pError) {
+        Log.e("setError",pError );
         ((TextView) view.findViewById(R.id.lbl_create1_error)).setText(pError);
     }
 
@@ -88,14 +91,17 @@ public class fgrCreate
         boolean okAlias = Utilisateur.validateAlias(alias);
         boolean okPswd1 = Utilisateur.validatePasowrd(psdw1);
         boolean okPswdMatch = psdw1.equals(psdw2 );
-        if (okEmail && okAlias && okPswd1 && okPswdMatch ){
-            ((HomeActivity) getActivity()).userControler.sendCreateUser(alias,psdw1,email,1);//FIXME
+        boolean okFinal = okEmail && okAlias && okPswd1 && okPswdMatch;
+        TextView errorText = ((TextView) view.findViewById(R.id.lbl_create1_error));
+        if (okFinal ){
+            errorText.setText("");
+            DataManager.getInstance().createUser( alias,psdw1,email,1);
         }else{
             String error = (okEmail     ?"":" Email non valide");
             error+=        (okAlias     ?"":" Alias non valide");
             error+=        (okPswd1     ?"":" Mot de passe non valide");
             error+=        (okPswd1?   (okPswdMatch ?"":" Mot de passe non identique"):"" );
-            ((TextView) view.findViewById(R.id.lbl_create1_error)).setText(error);
+            errorText.setText(error);
         }
     }
 

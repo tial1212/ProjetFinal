@@ -11,6 +11,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 
+import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
 import com.example.alexandrearsenault.projetfinal.R;
 
@@ -38,13 +39,16 @@ public class fgrLogin extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.lay_login, container, false);
 
+
         Button bntLogin = (Button) view.findViewById(R.id.btn_login_login);
         bntLogin.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
             login();
         } });
         Button bntCreate = (Button) view.findViewById(R.id.btn_login_create);
         bntCreate.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-
+            HomeActivity activity = ((HomeActivity)getActivity());
+            activity.action = HomeActivity.ACT_CREATE;
+            activity.changeFragment( new fgrCreate() );
         } });
 
         return view ;
@@ -52,6 +56,7 @@ public class fgrLogin extends Fragment {
 
 
     private void login(){
+        ((HomeActivity)getActivity()).action = HomeActivity.ACT_CONNECT;
         email = ((EditText) view.findViewById(R.id.lbl_login_email)).getText().toString();
         psdw = ((EditText) view.findViewById(R.id.lbl_login_pswd)).getText().toString();
         DataManager.getInstance().login(email , psdw);

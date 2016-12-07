@@ -2,6 +2,7 @@ package com.example.alexandrearsenault.projetfinal.Activity;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.example.alexandrearsenault.projetfinal.Controler.List.ListControler;
 import com.example.alexandrearsenault.projetfinal.Controler.Playlist.PlaylistControler;
@@ -38,13 +40,17 @@ public class HomeActivity extends AppCompatActivity
         implements
         NavigationView.OnNavigationItemSelectedListener {
 
-    public static final int ACT_CONNECT_INIT = 1;
-    public static final int ACT_CONNECT = 2;
-    public static final int ACT_START = 3;
-    public static final int ACT_PROFILE = 4;
-    public static final int ACT_AVATAR_CREATE = 5;
-    public static final int ACT_AVATAR_MODIFY = 6;
+    public static final int ACT_NONE          =-1;
+    public static final int ACT_CONNECT_AUTO  = 1;
+    public static final int ACT_CONNECT       = 2;
+    public static final int ACT_CREATE        = 3;
+    public static final int ACT_START         = 4;
+    public static final int ACT_PROFILE       = 5;
+    public static final int ACT_AVATAR_CREATE = 6;
+    public static final int ACT_AVATAR_MODIFY = 7;
     public int action;
+
+
 
 
     //keep login identifiant
@@ -52,6 +58,7 @@ public class HomeActivity extends AppCompatActivity
     private boolean isUserConnected;
 
     private DataManager dataMgr;
+    private Drawer drawer ;
 
     public UserControler userControler;
     public SongControler songControler;
@@ -59,6 +66,11 @@ public class HomeActivity extends AppCompatActivity
     public PlaylistControler playlistControler;
 
     private GoogleApiClient client;
+
+
+    //temporary for testing
+    public static String emailTest = "tial1212@gmail.com";
+    public static String pswdTest = "Alex123@";
 
 
     @Override
@@ -70,16 +82,15 @@ public class HomeActivity extends AppCompatActivity
 
 
         //DRAWER
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
+        DrawerLayout drawerLay = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle( this, drawerLay, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLay.setDrawerListener(toggle);
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        LinearLayout navHead = (LinearLayout) navigationView.getHeaderView(0);
-        navHead.setOnClickListener(new View.OnClickListener() {
+        LinearLayout drawerLayout = (LinearLayout) navigationView.getHeaderView(0);
+        drawerLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -87,22 +98,28 @@ public class HomeActivity extends AppCompatActivity
                 goToProfile();
             }
         });
+        TextView alias = (TextView) drawerLayout.findViewById(R.id.nav_alias);
+        alias.setText("AGDZ");
+        drawer = new Drawer(drawerLayout );
+        drawer.setDefaultInfo();
 
 
         //   Controlers
         dataMgr = DataManager.getInstance(this);
-        userControler = new UserControler(this, dataMgr);
+        userControler = new UserControler(this, dataMgr ,getSharedPreferences(UserControler.PREFS_USER,0) );
         songControler = new SongControler(this,dataMgr);
         listControler = new ListControler(this,dataMgr);
         playlistControler = new PlaylistControler(this,dataMgr);
 
 
         //try to connect
+
         isUserConnected = false;
         user = new Utilisateur();
-        user.setEMaill( "tial1212@gmail.com");
-        user.setPasowrd( "Alex123@"); //TODO remove
-        action = ACT_CONNECT_INIT;
+        userControler.loadPreferences();
+        Log.e("read value = ",user.getEMaill() );
+
+        action = ACT_CONNECT_AUTO;
         userControler.sendLogin( user.getEMaill() , user.getPasowrd() );
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -122,40 +139,31 @@ public class HomeActivity extends AppCompatActivity
     /**
      *
      * CASE 1  t , user  --> show profile
-     * CASE 3  f , null  --> disconect, show start
+     * CASE 2  f , null  --> disconect, show start
      *
      * @param connected
      * @param pUser
      */
     public void connect(boolean connected , Utilisateur pUser) {
-        //TODO
+        Log.e("HomeActivity.connect()", ""+(pUser!=null?connected+pUser.toString():"") );
         if (connected && pUser != null){
             user = pUser;
-            action = -1;
+            drawer.setInfo( user.getAlias(),user.getEMaill() );
+            action = ACT_NONE;
         }
         else if (!connected ) {
             this.isUserConnected = false;
             this.user =null;
             this.changeFragment( new fgrStart() );
-            action = -1;
+            drawer.setDefaultInfo();
+            action = ACT_NONE;
         }
     }
-
 
     public boolean isUserConnected(){
         return isUserConnected;
     }
 
-
-    public void onUserAnswer(Utilisateur pUser) {
-        if (pUser != null){
-
-        }
-        else {
-
-
-        }
-    }
 
 
 
@@ -239,7 +247,10 @@ public class HomeActivity extends AppCompatActivity
     @Override
     public void onStop() {
         super.onStop();
+        userControler.savePreferences();
         AppIndex.AppIndexApi.end(client, getIndexApiAction());
         client.disconnect();
+
+
     }
 }

@@ -2,6 +2,7 @@ package com.example.alexandrearsenault.projetfinal.Controler.User;
 
 
 import android.app.Fragment;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
@@ -15,7 +16,11 @@ import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
  * Created by alexandrearsenault on 2016-12-01.
  */
 
-public class UserControler  {
+public class UserControler {
+
+    public  static final String PREFS_USER      = "SavedUserFile";
+    private static final String PREFS_USER_EMAIL = "name";
+    private static final String PREFS_USER_PSWD = "pswd";
 
 
     DataManager         dataMgr;
@@ -27,10 +32,12 @@ public class UserControler  {
     fgrLogin            fgrLogin;
     fgrProfile          fgrProfile;
     fgrStart            fgrStart;
+    SharedPreferences   settings;
 
-    public UserControler(HomeActivity pHomeActivity, DataManager pDataMgr) {
+    public UserControler(HomeActivity pHomeActivity, DataManager pDataMgr , SharedPreferences pSharedPref) {
         activity = pHomeActivity;
         dataMgr =  pDataMgr;
+        settings = pSharedPref;
     }
 
 
@@ -58,15 +65,14 @@ public class UserControler  {
         }
     }
 
-    public void sendCreateUser(String pAlias ,String pMotDePasse ,String pCourriel ,int pIdAvatar){
-        dataMgr.createUser( pAlias , pMotDePasse , pCourriel , pIdAvatar);
-    }
 
     public void onCreateAnswer(Token token) {
+
         if (token.getEtat() ){
             activity.changeFragment( new fgrConfirmCreate() );
         }
         else {
+
             fgrCreate.setError( token.getAction() );
         }
     }
@@ -74,37 +80,50 @@ public class UserControler  {
 
 
     public void sendLogin(String pCourriel, String pMotDePasse){
-        Log.e("UserControler","sendLogin");
+        Log.e("UserCtrl","sendLogin");
         dataMgr.login(pCourriel, pMotDePasse);
     }
 
 
-    public void onLoginAnswer(Token token) {
-        Log.e("onLoginAnswer",token.toString());
+    public void tryConnectFromLastSession(String pCourriel, String pMotDePasse){
+        Log.e("UserCtrl","sendLogin");
+        dataMgr.login(pCourriel, pMotDePasse);
+    }
 
-        if (token == null ){
+
+    public void onLoginAnswer(Token pToken) {
+        Log.e("UserCtrl.onLoginAnswer",pToken.toString());
+
+        if (pToken == null ){
             Log.e("onLoginAnswer","Token null");
-        }else if (activity.action == activity.ACT_CONNECT_INIT){
-            activity.action = -1;
-            boolean ok = token.getEtat();
-            if (ok ){
-
-                activity.changeFragment( new fgrProfile() );
+        }else if (activity.action == HomeActivity.ACT_CONNECT_AUTO){
+            activity.action = HomeActivity.ACT_NONE;
+            if ( pToken.getEtat() ){
+                Log.e("onLoginAnswer","auto connect ok");
+                dataMgr.getUser();
             }else{
-
                 activity.connect(false ,  null );
-
             }
-
-
-        }else if (activity.action == activity.ACT_CONNECT){
-            activity.action = -1;
-            if (token.getEtat() ){
-                activity.changeFragment( new fgrProfile() );
-
+        }else if (activity.action == HomeActivity.ACT_CONNECT){
+            activity.action = HomeActivity.ACT_NONE;
+            if (pToken.getEtat() ){
+                Log.e("onLoginAnswer","connect ok");
+                dataMgr.getUser();
             }else{
-                fgrLogin.setError( token.getAction() );
+                fgrLogin.setError( pToken.getAction() );
             }
+        }
+    }
+
+
+    public void onUserAnswer(Utilisateur pUser) {
+        Log.e("UserCtrl.onUserAnswer",pUser.toString());
+        activity.action = HomeActivity.ACT_NONE ;
+        if (pUser == null ){
+            Log.e("onUserAnswer","Token null");
+        }else{
+            activity.connect(true , pUser);
+            activity.changeFragment( new fgrProfile() );
         }
     }
 
@@ -120,6 +139,26 @@ public class UserControler  {
                 break;
         }
     }
+
+    public void savePreferences(){
+        Log.e("UserControler","savePreferences()");
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString(PREFS_USER_EMAIL, activity.user.getEMaill() );
+        editor.putString(PREFS_USER_PSWD, activity.user.getPasowrd() );
+        editor.commit();
+
+    }
+
+    public void loadPreferences(){
+        Log.e("UserControler","loadPreferences()");
+        activity.user.setEMaill( settings.getString(PREFS_USER_EMAIL, "") );
+        activity.user.setPasowrd( settings.getString(PREFS_USER_PSWD,  "") );
+
+    }
+
+
+
+
 
 
 }
