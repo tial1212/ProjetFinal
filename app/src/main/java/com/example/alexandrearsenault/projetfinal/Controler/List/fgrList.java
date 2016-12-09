@@ -2,6 +2,8 @@ package com.example.alexandrearsenault.projetfinal.Controler.List;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,35 +29,57 @@ public class fgrList extends Fragment {
 
     private View view;
     private RecyclerView recyclerView;
+    private HomeActivity activity;
+
+    private static final int TYPE_AVATAR = 1;
+    private static final int TYPE_SONG = 2;
+    private static final int TYPE_PLAYLIST = 3;
+    private int              type;
+
+    private List<Musique> listSong;
+    private List<ListesDeLecture> listPlaylist;
+    private List<Avatar> listAvatar;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        activity = ((HomeActivity)getActivity());
         view = inflater.inflate(R.layout.lay_list, container, false);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.rec_view_list);
+        recyclerView.setLayoutManager( new LinearLayoutManager( activity.getApplicationContext()) );
+        recyclerView.setItemAnimator( new DefaultItemAnimator() );
+        assert recyclerView != null;
+
+        if  (type == TYPE_AVATAR) {
+            recyclerView.setAdapter(new ListRecycler(  (List<Object>)(List<?>)listAvatar   , activity ));
+        }
+        else if (type == TYPE_PLAYLIST) {
+            recyclerView.setAdapter(new ListRecycler(  (List<Object>)(List<?>)listPlaylist   , activity ));
+        }
+        else if (type == TYPE_SONG) {
+            recyclerView.setAdapter(new ListRecycler(  (List<Object>)(List<?>)listSong   , activity ));
+        }
+        else{
+            Log.e("fgrList.onCreateView()","NO CONTENT : set content before display fragment");
+            return null;
+        }
         return view ;
     }
 
 
-
-
-
-    public void showListAvatar(List<Avatar> pList){
-        showList();
-        recyclerView.setAdapter(new ListRecycler(  (List<Avatar>)((List<?>) pList ) , ((HomeActivity)getActivity()) ));
+    public void setListAvatar(List<Avatar> pList , HomeActivity pActivity){
+        type = TYPE_AVATAR;
+        listAvatar = pList;
     }
 
-    public void showListPlaylist(List<ListesDeLecture> pList){
-        showList();
-        recyclerView.setAdapter(new ListRecycler(  (List<ListesDeLecture>)((List<?>) pList ) , ((HomeActivity)getActivity()) , false ));
+    public void setListPlaylist(List<ListesDeLecture> pList, HomeActivity pActivity){
+        type = TYPE_PLAYLIST;
+        listPlaylist = pList;
     }
 
-    public void showListSong(List<Musique> pList){
-        showList();
-        recyclerView.setAdapter(new ListRecycler(  (List<Musique>)((List<?>) pList ) , ((HomeActivity)getActivity()) , 1 ));
-    }
-
-    private void showList(){
-        getActivity().setContentView(R.layout.lay_list);
-        recyclerView = (RecyclerView) getActivity().findViewById(R.id.rec_view_list); //FIXME
-        assert recyclerView != null;
+    public void setListSong(List<Musique> pList , HomeActivity pActivity){
+        type = TYPE_SONG;
+        listSong= pList;
     }
 }

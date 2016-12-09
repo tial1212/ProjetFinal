@@ -3,8 +3,6 @@ package com.example.alexandrearsenault.projetfinal.Data;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -13,7 +11,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
-import java.net.URLConnection;
 
 
 /**
@@ -70,7 +67,6 @@ public class DownloadJSONAsyncTask extends AsyncTask<Void, Void, String> {
             // Starts the query
             conn.connect();
             int response = conn.getResponseCode();
-            Log.d("SELF-DEBUG", "The server response is: " + response);
             is = conn.getInputStream();
 
             // Convert the InputStream into a string

@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.alexandrearsenault.projetfinal.Controler.List.ListControler;
+import com.example.alexandrearsenault.projetfinal.Controler.List.fgrList;
 import com.example.alexandrearsenault.projetfinal.Controler.Playlist.PlaylistControler;
 import com.example.alexandrearsenault.projetfinal.Controler.Song.SongControler;
 import com.example.alexandrearsenault.projetfinal.Controler.User.UserControler;
@@ -46,8 +47,11 @@ public class HomeActivity extends AppCompatActivity
     public static final int ACT_CREATE        = 3;
     public static final int ACT_START         = 4;
     public static final int ACT_PROFILE       = 5;
-    public static final int ACT_AVATAR_CREATE = 6;
-    public static final int ACT_AVATAR_MODIFY = 7;
+    public static final int ACT_AVATAR_LOAD   = 6;
+    public static final int ACT_AVATAR_CREATE = 7;
+    public static final int ACT_AVATAR_MODIFY = 8;
+    public static final int ACT_PLAYLIST_MY = 9;
+    public static final int ACT_SONG_MY = 10;
     public int action;
 
 
@@ -55,10 +59,9 @@ public class HomeActivity extends AppCompatActivity
 
     //keep login identifiant
     public Utilisateur user;
-    private boolean isUserConnected;
 
     private DataManager dataMgr;
-    private Drawer drawer ;
+    public Drawer drawer ;
 
     public UserControler userControler;
     public SongControler songControler;
@@ -95,7 +98,7 @@ public class HomeActivity extends AppCompatActivity
             public void onClick(View v) {
                 DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
                 drawer.closeDrawer(GravityCompat.START);
-                goToProfile();
+                userControler.goToProfile();
             }
         });
         TextView alias = (TextView) drawerLayout.findViewById(R.id.nav_alias);
@@ -114,13 +117,10 @@ public class HomeActivity extends AppCompatActivity
 
         //try to connect
 
-        isUserConnected = false;
-        user = new Utilisateur();
-        userControler.loadPreferences();
-        Log.e("read value = ",user.getEMaill() );
+       userControler.tryInitialConnection();
 
-        action = ACT_CONNECT_AUTO;
-        dataMgr.login( user.getEMaill() , user.getPasowrd() );
+
+
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
@@ -136,37 +136,6 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-    /**
-     *
-     * CASE 1  t , user  --> show profile
-     * CASE 2  f , null  --> disconect, show start
-     *
-     * @param connected
-     * @param pUser
-     */
-    public void connect(boolean connected , Utilisateur pUser) {
-        Log.e("HomeActivity.connect", "("+connected+" , "+(pUser!=null?pUser.toString():"")+")" );
-        if (connected && pUser != null){
-            user = pUser;
-            drawer.setInfo( user.getAlias(),user.getEMaill() );
-            action = ACT_NONE;
-            isUserConnected = true;
-            this.changeFragment( new fgrProfile() );
-        }
-        else if (!connected ) {
-            this.isUserConnected = false;
-            this.user =null;
-            this.changeFragment( new fgrStart() );
-            drawer.setDefaultInfo();
-            action = ACT_NONE;
-        }
-    }
-
-    public boolean isUserConnected(){
-        return isUserConnected;
-    }
-
-
 
 
 
@@ -176,10 +145,11 @@ public class HomeActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_my_song:
-                Log.e("menu", " my song");
+                dataMgr.getMySongs(0,20);
                 break;
             case R.id.nav_my_playlist:
-                Log.e("menu", " my playlist");
+                action = ACT_PLAYLIST_MY;
+                dataMgr.getMyPlaylists(0,20);
                 break;
             case R.id.nav_add_song:
                 Log.e("menu", " add song");
@@ -203,15 +173,7 @@ public class HomeActivity extends AppCompatActivity
     }
 
 
-    private void goToProfile() {
-        Log.e("goToProfile", " connected : " + isUserConnected);
-        if (isUserConnected) {
-            userControler.setFgr(new fgrProfile());
-        } else {
-            fgrStart fgr = new fgrStart();
-            userControler.setFgr(fgr);
-        }
-    }
+
 
 
     public void changeFragment(Fragment pFragment) {

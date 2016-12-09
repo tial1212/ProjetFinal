@@ -57,6 +57,7 @@
     <!--            profile            -->
     <string name="lbl_profile_btn_edit">Modifier</string>
     <string name="lbl_profile_btn_save">Enregistrer</string>
+    <string name="lbl_profile_btn_logoff">Déconection</string>
     <string name="lbl_profile_nb_song">Nombre de musique</string>
     <string name="lbl_profile_nb_playlist">Nombre de ListeDeLecture</string>
 
@@ -64,6 +65,13 @@
     <!--            song            -->
     <string name="lbl_song_btn_edit">Modifier</string>
     <string name="lbl_song_btn_done">Enregistrer</string>
+
+
+    <!--           playlist          -->
+    <string name="lbl_playlist_btn_edit">Modifier</string>
+    <string name="lbl_playlist_btn_done">Enregistrer</string>
+    <string name="lbl_playlist_swt_public">Publique</string>
+    <string name="lbl_playlist_swt_active">Activé</string>
 
 
 </resources>

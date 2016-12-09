@@ -1,5 +1,8 @@
 package com.example.alexandrearsenault.projetfinal.Controler.List;
 
+import android.util.Log;
+import android.widget.Toast;
+
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
 import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
@@ -23,34 +26,68 @@ public class ListControler {
     private static int action;
     private final DataManager dataMgr;
     private final HomeActivity activity;
+    private fgrList fgrList;
 
-    public fgrList fgrList;
 
     public ListControler(HomeActivity pHomeActivity, DataManager pDataMgr) {
         activity = pHomeActivity;
         dataMgr =  pDataMgr;
-        fgrList = new fgrList();
     }
 
 
+    /****************
+                       AVATAR
+                                ****************/
 
     public void onAvatarAnswer(List<Avatar> pList) {
-        fgrList.showListAvatar(pList);
-    }
-    public void onPlaylistAnswer(List<ListesDeLecture> pList) {
-        fgrList.showListPlaylist(pList);
-    }
-    public void onSongAnswer(List<Musique> pList) {
-        fgrList.showListSong(pList);
+
     }
 
 
+    /****************
+                        SONG
+                                ****************/
 
-    public void onDoneSelectingSong(Musique s) {
-        activity.songControler.setFgr( s );
+    public void onMySongListAnswer(List<Musique> pListSong) {
+        //TODO
+        if (pListSong != null){
+            fgrList.setListSong(pListSong , activity);
+        }else {
+            Toast.makeText(activity.getApplicationContext(), "Impossible de charger vos chansons", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void onPublicSongListAnswer(List<Musique> pListSong) {
+        //TODO
+        if (pListSong != null){
+            fgrList.setListSong(pListSong , activity );
+        }else {
+            Toast.makeText(activity.getApplicationContext(), "Impossible de charger les chansons publiques", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void onDoneSelectingPlaylist(ListesDeLecture p) {
+        Log.e("HERE","HERE");
         activity.playlistControler.setFgr( p );
     }
+
+
+    /****************
+                     PLAYLIST
+                               ****************/
+
+    public void onMyPlaylistListAnswer(List<ListesDeLecture> pListPlaylist) {
+        if (pListPlaylist != null){
+            fgrList = new fgrList();
+            fgrList.setListPlaylist(pListPlaylist, activity);
+            activity.changeFragment(fgrList);
+        }else {
+            Toast.makeText(activity.getApplicationContext(), "Impossible de charger vos liste de lecture", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onPublicPlaylistListAnswer(List<ListesDeLecture> pList) {
+        //TODO
+    }
+
+
 }

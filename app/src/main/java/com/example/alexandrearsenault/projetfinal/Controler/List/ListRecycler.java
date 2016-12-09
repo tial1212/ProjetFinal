@@ -1,6 +1,7 @@
 package com.example.alexandrearsenault.projetfinal.Controler.List;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,27 +30,30 @@ public class ListRecycler extends RecyclerView.Adapter<ListRecycler.ViewHolder> 
     private static final int ACT_AVATAR   = 1;
     private static final int ACT_PLAYLIST = 2;
     private static final int ACT_SONG     = 3;
+    private static final int ACT_PLAYLIST_SONG     = 4;
 
     private int action;
     private HomeActivity activity;
 
 
-    public ListRecycler(List<Avatar> pAvatarList , HomeActivity pActivity ) {
+    public ListRecycler(List<Object> pList , HomeActivity pActivity ) {
         this.activity = pActivity;
-        this.listAvatar = pAvatarList;
-        this.action = ACT_AVATAR;
-    }
 
-    public ListRecycler(List<ListesDeLecture> pPlaylistList , HomeActivity pActivity , boolean b) {
-        this.activity = pActivity;
-        this.lisPlaylist = pPlaylistList;
-        this.action = ACT_PLAYLIST;
-    }
-
-    public ListRecycler(List<Musique> pMusicList , HomeActivity pActivity , int i) {
-        this.activity = pActivity;
-        this.listSong = pMusicList;
-        this.action = ACT_SONG;
+        if (!pList.isEmpty() && pList.get(0) instanceof Avatar ){
+            this.action = ACT_AVATAR;
+            this.listAvatar = (List<Avatar>)(List<?>) pList;
+        }
+        else if (!pList.isEmpty() && pList.get(0) instanceof ListesDeLecture ) {
+            this.action = ACT_PLAYLIST;
+            this.lisPlaylist = (List<ListesDeLecture>)(List<?>) pList;
+        }
+        else if (!pList.isEmpty() && pList.get(0) instanceof Musique){
+             this.action = ACT_SONG;
+             this.listSong = (List<Musique>)(List<?>) pList;
+        }
+        else{
+            Log.e("ListRecycler.con(pList)", "pList == null || pList type invalid");
+        }
     }
 
 
@@ -61,10 +65,12 @@ public class ListRecycler extends RecyclerView.Adapter<ListRecycler.ViewHolder> 
                 id = R.layout.lay_avatar_content;
                 break;
             case ACT_PLAYLIST :
-                id = R.layout.lay_avatar_content;
+                id = R.layout.lay_playlist_content;
                 break;
             case  ACT_SONG :
-                id = R.layout.lay_avatar_content;
+                id = R.layout.lay_song_content;
+            case  ACT_PLAYLIST_SONG :
+                id = R.layout.lay_song_content;
         }
         View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
         return new ViewHolder(view , action);
@@ -99,6 +105,15 @@ public class ListRecycler extends RecyclerView.Adapter<ListRecycler.ViewHolder> 
                 //holder.song_image.setImageBitmap( s.getCoverArt() );
                 holder.view.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
                     activity.songControler.onDoneSelectingSong( s );
+                } } );
+            case  ACT_PLAYLIST_SONG :
+                final Musique s2 = listSong.get(position);
+                holder.song = s2;
+                holder.song_title.setText(s2.getTitle() );
+                holder.song_artist.setText(s2.getArtist() );
+                //holder.song_image.setImageBitmap( s.getCoverArt() );
+                holder.view.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
+                    activity.playlistControler.onDoneSelectingSong( s2 );
                 } } );
         }
     }

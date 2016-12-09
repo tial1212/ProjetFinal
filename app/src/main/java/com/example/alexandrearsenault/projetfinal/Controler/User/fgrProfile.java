@@ -30,25 +30,27 @@ public class fgrProfile extends Fragment {
 
     private boolean editing;
 
-    HomeActivity activity;
+     HomeActivity   activity;
 
-     EditText aliasEdit ;
-     TextView emailText ;
-     TextView nbPlaylistText ;
-     TextView nbSongText ;
-     TextView errorText ;
+     EditText       aliasEdit ;
+     TextView       emailText ;
+     TextView       nbPlaylistText ;
+     TextView       nbSongText ;
+     TextView       errorText ;
 
-     ImageButton btnImgAvatar;
-     Button       btnEdit;
+     ImageButton    btnImgAvatar;
+     Button         btnEdit;
+     Button         btnLogoff;
 
     String alias;
     int idAvatar;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         activity = ((HomeActivity)getActivity());
 
-        if ( activity.isUserConnected()  ){
+        if ( activity.userControler.isUserConnected()  ){
             view = inflater.inflate(R.layout.lay_profile, container, false);
             aliasEdit = (EditText)view.findViewById(R.id.lbl_profile_alias);
             emailText = (TextView)view.findViewById(R.id.txt_profile_email);
@@ -71,12 +73,25 @@ public class fgrProfile extends Fragment {
             this.btnImgAvatar = (ImageButton) view.findViewById(R.id.btnImg_profile_avatar);
             this.btnImgAvatar.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
                 //select avatar
+                activity.action = HomeActivity.ACT_AVATAR_LOAD;
+                DataManager.getInstance().getAvatarList(0,20);
+
             } });
-            this.btnImgAvatar.setActivated(false);
+
+            this.btnLogoff = (Button) view.findViewById(R.id.btn_profile_logoff);
+            this.btnLogoff.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
+                activity.action = HomeActivity.ACT_AVATAR_LOAD;
+                DataManager.getInstance().logoff( activity.user.getEMaill() );
+            } });
+
+            this.btnImgAvatar.setClickable(false);
+            this.aliasEdit.setEnabled(false);
+
+
             this.btnEdit.setText( getString(R.string.lbl_profile_btn_edit ) );
 
-            DataManager.getInstance().getUserNbSong();
-            DataManager.getInstance().getUserNbPlaylist();
+            //DataManager.getInstance().getUserNbSong();
+            //DataManager.getInstance().getUserNbPlaylist();
 
             return view ;
         }
@@ -97,7 +112,8 @@ public class fgrProfile extends Fragment {
         Log.e("fgrProfile","edit("+isEditing+")");
         editing = isEditing;
 
-            btnImgAvatar.setActivated(isEditing);
+            btnImgAvatar.setClickable(editing);
+            aliasEdit.setEnabled(editing);
             btnEdit.setText(   (editing? getString(R.string.lbl_profile_btn_save ) : getString(R.string.lbl_profile_btn_edit ) ) );
 
         if (!editing ) { //save
@@ -117,15 +133,13 @@ public class fgrProfile extends Fragment {
 
 
     public void onEditAnswer(Token pToken) {
-        if (pToken.getEtat() == true ){
+        if (pToken != null &&  pToken.getEtat() == true ){
             Toast.makeText(activity.getApplicationContext(), "modification OK", Toast.LENGTH_SHORT).show();
             activity.user.setAvatar(idAvatar);
             activity.user.setAlias(alias);
         } else {
-            Toast.makeText(activity.getApplicationContext(), "Erreur de modification revert", Toast.LENGTH_SHORT).show();
-            //revert
+            Toast.makeText(activity.getApplicationContext(), "ERREUR : modification annulé : ", Toast.LENGTH_SHORT).show();
             aliasEdit.setText(activity.user.getAlias() );
-
         }
     }
 

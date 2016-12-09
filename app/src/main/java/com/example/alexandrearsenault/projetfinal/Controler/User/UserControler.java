@@ -7,10 +7,14 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
+import com.example.alexandrearsenault.projetfinal.Controler.List.fgrList;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
 import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
+import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
 import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
+
+import java.util.List;
 
 
 /**
@@ -23,6 +27,7 @@ public class UserControler {
     private static final String PREFS_USER_EMAIL = "name";
     private static final String PREFS_USER_PSWD = "pswd";
 
+    private boolean isUserConnected;
 
     DataManager         dataMgr;
     HomeActivity        activity;
@@ -39,11 +44,45 @@ public class UserControler {
         activity = pHomeActivity;
         dataMgr =  pDataMgr;
         settings = pSharedPref;
+        isUserConnected = false;
     }
 
 
+    /**
+     *
+     * CASE 1  t , user  --> show profile
+     * CASE 2  f , null  --> disconect, show start
+     *
+     * @param connected
+     * @param pUser
+     */
+    public void connect(boolean connected , Utilisateur pUser) {
+        Log.e("HomeActivity.connect", "("+connected+" , "+(pUser!=null?pUser.toString():"")+")" );
+        if (connected && pUser != null){
+            activity.user = pUser;
+            activity.drawer.setInfo( activity.user.getAlias(),activity.user.getEMaill() );
+            activity.action = HomeActivity.ACT_NONE;
+            isUserConnected = true;
+            this.setFgr( new fgrProfile() );
+        }
+        else if (!connected ) {
+            this.isUserConnected = false;
+            activity.user =null;
+            activity.action = HomeActivity.ACT_START;
+            activity.userControler.setFgr( new fgrStart() );
+            activity.drawer.setDefaultInfo();
+        }
+    }
+
+    public boolean isUserConnected(){
+        return isUserConnected;
+    }
+
+
+
+
     public void setFgr(Fragment pFragment) {
-        Log.e("UserControler","setFgr");
+        Log.e("UserControler","setFgr = "+pFragment.getClass().toString() );
         if (pFragment instanceof fgrCreate){
             fgrCreate = (fgrCreate) pFragment;
             activity.changeFragment( pFragment );
@@ -68,25 +107,10 @@ public class UserControler {
     }
 
 
-    public void onCreateAnswer(Token token) {
-        if (token.getEtat() ){
-            activity.changeFragment( new fgrConfirmCreate() );
-        }
-        else {
-            fgrCreate.setError( token.getAction() );
-        }
-    }
-
-
-
-
-
-
     public void tryConnectFromLastSession(String pCourriel, String pMotDePasse){
         Log.e("UserCtrl","sendLogin");
         dataMgr.login(pCourriel, pMotDePasse);
     }
-
 
     public void onLoginAnswer(Token pToken) {
         Log.e("UserCtrl.onLoginAnswer",pToken.toString());
@@ -98,7 +122,7 @@ public class UserControler {
                 Log.e("onLoginAnswer","auto connect ok");
                 dataMgr.getUser();
             }else{
-                activity.connect(false ,  null );
+                this.connect(false ,  null );
             }
         }else if (activity.action == HomeActivity.ACT_CONNECT){
             activity.action = HomeActivity.ACT_NONE;
@@ -111,6 +135,28 @@ public class UserControler {
         }
     }
 
+    public void onLogoffAnswer(Token pToken) {
+        if (pToken != null){
+            if ( pToken.getEtat() ){
+                this.connect(false, null);
+            }else{
+                Log.e("UsrCtl.onLogoffAnswer()","ERREUR "+pToken.getAction() );
+                Toast.makeText(activity.getApplicationContext(), "Échec de déconection " + pToken.getAction() , Toast.LENGTH_SHORT).show();
+            }
+        }else {
+            Log.e("UsrCtl.onLogoffAnswer()","pToken = null");
+            Toast.makeText(activity.getApplicationContext(), "Aucune réponce du derveur ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void onCreateAnswer(Token token) {
+        if (token.getEtat() ){
+            activity.changeFragment( new fgrConfirmCreate() );
+        }
+        else {
+            fgrCreate.setError( token.getAction() );
+        }
+    }
 
     public void onUserAnswer(Utilisateur pUser) {
         Log.e("UserCtrl.onUserAnswer(", (pUser!= null?pUser.toString() : "null" ) +")" );
@@ -118,7 +164,7 @@ public class UserControler {
         if (pUser == null ){
             Log.e("onUserAnswer","Token null");
         }else{
-            activity.connect(true , pUser);
+            this.connect(true , pUser);
         }
     }
 
@@ -132,13 +178,9 @@ public class UserControler {
         fgrProfile.onNbSongAnswer(pNbSong);
     }
 
-
-
     public void onModifyUserAnswer(Token pToken) {
         fgrProfile.onEditAnswer(pToken);
     }
-
-
 
     public void onDoneSelectingAvatar(Avatar pAvatar){
         Log.e("UserControler","onDoneSelectingAvatar");
@@ -151,6 +193,39 @@ public class UserControler {
         }
     }
 
+    public void onGetAvatarListAnswer(List<Avatar> pAvatarList){
+        Log.e("UserControler","onDoneSelectingAvatar");
+        switch (activity.action) {
+            case HomeActivity.ACT_AVATAR_LOAD:
+                if (pAvatarList != null){
+                    fgrList fgrListAvatar = new fgrList();
+                    fgrListAvatar.setListAvatar(pAvatarList , activity);
+                    activity.changeFragment( new fgrList());
+                }
+                else {
+                    Log.e("UsrCtl.GetAvLstAnswer()","pAvatarList = null");
+                    Toast.makeText(activity.getApplicationContext(), "Aucun Avatar a sélectionner ", Toast.LENGTH_SHORT).show();
+                }
+        }
+    }
+
+    public void tryInitialConnection() {
+        activity.user = new Utilisateur();
+        activity.userControler.loadPreferences();
+        activity.action = HomeActivity.ACT_CONNECT_AUTO;
+        dataMgr.login( activity.user.getEMaill() , activity.user.getPasowrd() );
+    }
+
+    public void goToProfile() {
+        Log.e("goToProfile", " connected : " + isUserConnected);
+        if (isUserConnected) {
+            this.setFgr(new fgrProfile());
+        } else {
+            fgrStart fgr = new fgrStart();
+            this.setFgr(fgr);
+        }
+    }
+
     public void savePreferences(){
         Log.e("UserControler","savePreferences()");
         SharedPreferences.Editor editor = settings.edit();
@@ -159,7 +234,6 @@ public class UserControler {
         editor.commit();
 
     }
-
     public void loadPreferences(){
         Log.e("UserControler","loadPreferences()");
         activity.user.setEMaill( settings.getString(PREFS_USER_EMAIL, "") );

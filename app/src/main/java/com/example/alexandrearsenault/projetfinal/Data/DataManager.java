@@ -1,6 +1,5 @@
 package com.example.alexandrearsenault.projetfinal.Data;
 
-import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,13 +9,7 @@ import com.example.alexandrearsenault.projetfinal.Modele.Musique;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
 import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 
@@ -55,6 +48,7 @@ public class DataManager {
     private static final String SERVER_PATH_U7    = SERVER_PATH + "/service/listeLecture/setPlaylistPublic?";
     private static final String SERVER_PATH_A4    = SERVER_PATH + "/service/listeLecture/getMyPlaylists?";
     private static final String SERVER_PATH_A5    = SERVER_PATH + "/service/listeLecture/getPublicPlaylistList?";
+    private static final String SERVER_PATH_A12  = SERVER_PATH + "/service/listeLecture/getSongListForPlaylist?"; //TODO  List<Song>
     //private static final String SERVER_PATH_U14   = SERVER_PATH + "";
     //private static final String SERVER_PATH_U15   = SERVER_PATH + "";
     //private static final String SERVER_PATH_U16   = SERVER_PATH + "";
@@ -62,7 +56,6 @@ public class DataManager {
     //private static final String SERVER_PATH_U18   = SERVER_PATH + "";
     private static final String SERVER_PATH_A8    = SERVER_PATH + "/service/avatar/getAvatar?";
     private static final String SERVER_PATH_A9    = SERVER_PATH + "/service/avatar/getAvatarList?";
-
 
 
 
@@ -93,13 +86,14 @@ public class DataManager {
     private static final int ACTION_U7      = 24;
     private static final int ACTION_A4      = 25;
     private static final int ACTION_A5      = 26;
-    //private static final int ACTION_U14     = 27;
-    //private static final int ACTION_U15     = 28;
-    //private static final int ACTION_U16     = 29;
-    //private static final int ACTION_U17     = 20;
-    //private static final int ACTION_U18     = 31;
-    private static final int ACTION_A8      = 32;
-    private static final int ACTION_A9      = 33;
+    private static final int ACTION_A12     = 27;
+    //private static final int ACTION_U14     = 28;
+    //private static final int ACTION_U15     = 29;
+    //private static final int ACTION_U16     = 30;
+    //private static final int ACTION_U17     = 31;
+    //private static final int ACTION_U18     = 32;
+    private static final int ACTION_A8      = 33;
+    private static final int ACTION_A9      = 34;
 
     private static  DataManager instance = null;
     private HomeActivity activity;
@@ -123,7 +117,6 @@ public class DataManager {
 
 
     public void onDoneDownloadingJson(String pResultJSON, int pAction) {
-        Log.e("DataManager", "onDoneDownloadingJson("+pAction+","+pResultJSON+")");
         switch (pAction){
             case ACTION_A2:
                 //login()
@@ -131,6 +124,7 @@ public class DataManager {
                 break;
             case ACTION_A3:
                 //logoff()
+                activity.userControler.onLogoffAnswer( ObjectConvertor.jsonToToken(pResultJSON) );
                 break;
             case ACTION_P1_1:
                 //createUser()
@@ -162,6 +156,7 @@ public class DataManager {
                 break;
             case ACTION_U8:
                 //createSong()
+                activity.songControler.onCreateSongAnswer( ObjectConvertor.jsonToToken(pResultJSON) );
                 break;
             case ACTION_U9_U10:
                 //getPrivateSong()
@@ -191,6 +186,19 @@ public class DataManager {
                 //modifyPlaylist()
                 activity.playlistControler.onModifyPlaylistAnswer( ObjectConvertor.jsonToToken(pResultJSON) );
                 break;
+            case ACTION_A12:
+                //getSongListForPlaylist()
+                //activity.playlistControler.onGetSongForPlaylistAnswer( ObjectConvertor.jsonToListSong(pResultJSON) );
+                //TODO ERASE testing purpose only
+                ArrayList<Musique> list2 = new ArrayList<>();
+                list2.add(new Musique( 1 ,"Show me How to Burlesque" ,"Christina Aguilera" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,true, true ));
+                list2.add(new Musique( 1 ,"Hey Devil" ,"Toby Mac" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,true, false ));
+                list2.add(new Musique( 2 ,"Love on the Brain" ,"Rihanna" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,true, false ));
+                list2.add(new Musique( 2 ,"Juju on That Beat (TZ Anthem)" ,"Zay Hilfigerrr & Zayion McCall" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,false, true ));
+                list2.add(new Musique( 2 ,"Alcohol Remix (feat. SkyBlu)" ,"The Cataracs" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,"dsfhagwtebdfbwdsfbzxsgbdsegbsf" ,false, false ));
+                activity.playlistControler.onGetSongListForPlaylistAnswer( list2 );
+
+                break;
             case ACTION_U5_1:
                 //setPlaylistName()
                 break;
@@ -202,29 +210,38 @@ public class DataManager {
                 break;
             case ACTION_A4:
                 //getMyPlaylists()
+                //activity.listControler.onMyPlaylistListAnswer( ObjectConvertor.jsonToListPlaylist(pResultJSON) );
+                //TODO ERASE testing purpose only
+                ArrayList<ListesDeLecture> list = new ArrayList<>();
+                list.add(new ListesDeLecture(1,"Best of Rihanna",true , true )   );
+                list.add(new ListesDeLecture(1,"420 party Time",true , false )   );
+                list.add(new ListesDeLecture(1,"The A List : POP",false , true )   );
+                list.add(new ListesDeLecture(1,"Chrismast time",false , false )   );
+                activity.listControler.onMyPlaylistListAnswer( list );
+
                 break;
             case ACTION_A5:
                 //getPublicPlaylistList()
                 break;
             case ACTION_A6:
                 //getMySongs()
+                activity.songControler.onMySongAnswer(ObjectConvertor.jsonToSong(pResultJSON));
                 break;
             case ACTION_A7:
                 //getPublicSongsList()
+                activity.listControler.onPublicPlaylistListAnswer( ObjectConvertor.jsonToListPlaylist(pResultJSON));
+                break;
+            case ACTION_A8:
+                //getAvatar()
+                break;
+            case ACTION_A9:
+                //getAvatarList()
+                activity.userControler.onGetAvatarListAnswer( ObjectConvertor.jsonToListAvatar(pResultJSON) );
                 break;
         }
     }
 
 
-
-
-
-    /**
-     * Get an action token.
-     *
-     * @param pEMail
-     * @return token OR null
-     */
     private Token getActionToken(String pEMail) {
         Log.e("DataManager", "getActionToken("+pEMail+")");
         String request = SERVER_PATH_A1+"courriel="+pEMail ;
@@ -241,9 +258,6 @@ public class DataManager {
 
         return null;
     }
-
-
-
 
     private boolean askToExecuteAction() {
 
@@ -361,15 +375,15 @@ public class DataManager {
     public void getMySongs(int pFirst ,int pLast){
         Log.e("DataManager", "getMySongs("+pFirst+","+pLast+")");
         if ( this.askToExecuteAction() ) {
-            String request = SERVER_PATH_U13+this.getTokenPath()+"&premier="+pFirst+"&dernier="+pLast;
-            new DownloadJSONAsyncTask(this , ACTION_U13 , request ).execute();
+            String request = SERVER_PATH_A6+this.getTokenPath()+"&premier="+pFirst+"&dernier="+pLast;
+            new DownloadJSONAsyncTask(this , ACTION_A6 , request ).execute();
         }
     }
     public void getPublicSongsList(int pFirst ,int pLast){
         Log.e("DataManager", "getPublicSongsList("+pFirst+","+pLast+")");
         if ( this.askToExecuteAction() ) {
-            String request = SERVER_PATH_U13+this.getTokenPath()+"&premier="+pFirst+"&dernier="+pLast;
-            new DownloadJSONAsyncTask(this , ACTION_U13 , request ).execute();
+            String request = SERVER_PATH_A7+this.getTokenPath()+"&premier="+pFirst+"&dernier="+pLast;
+            new DownloadJSONAsyncTask(this , ACTION_A7 , request ).execute();
         }
     }
     // ********************************************  PLAYLIST  ******************************************** //
@@ -436,6 +450,14 @@ public class DataManager {
             new DownloadJSONAsyncTask(this , ACTION_A5 , request ).execute();
         }
     }
+    public void getSongListForPlaylist(int pIdPlaylist) { //TODO
+        Log.e("DataManager", "getSongListForPlaylist("+pIdPlaylist+")");
+        if ( this.askToExecuteAction() ) {
+            String request = SERVER_PATH_A12+this.getTokenPath()+"&idPlaylist="+pIdPlaylist;
+            new DownloadJSONAsyncTask(this , ACTION_A12 , request ).execute();
+        }
+    }
+
     //********************************************  AVATAR  ********************************************//
     public void getAvatar(int pIdAvatar ) {
         Log.e("DataManager", "getPublicPlaylistList("+pIdAvatar+")");

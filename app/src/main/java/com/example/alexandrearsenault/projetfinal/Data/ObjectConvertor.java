@@ -2,6 +2,7 @@ package com.example.alexandrearsenault.projetfinal.Data;
 
 import android.util.Log;
 
+import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
 import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
 import com.example.alexandrearsenault.projetfinal.Modele.Musique;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
@@ -171,9 +172,54 @@ public class ObjectConvertor {
             }
             return listPlaylist;
         } catch (JSONException e) {
-            Log.e("DataMgr.jsonToPlaylist","ERROR CASTING");
+            Log.e("DataMgr.jsonToListPlayl","ERROR CASTING");
             e.printStackTrace();
             return  null;
         }
     }
+
+
+    public static Avatar jsonToAvatar(String pJson){
+        try {
+            JSONObject jsonObjAvatar = new JSONObject(pJson);
+            if (jsonObjAvatar == null ){ throw  new JSONException("NULL recieved"); }
+
+            Avatar avatar = new Avatar();
+            try {avatar.setId(           (Integer) jsonObjAvatar.get("id")       ) ; } catch (Exception e){ }
+            try {avatar.setName(         (String)  jsonObjAvatar.get("Nom")      ) ; } catch (Exception e){ }
+            try {avatar.setAvatar(       (String)  jsonObjAvatar.get("Avatar")   ) ; } catch (Exception e){ }
+
+            return avatar;
+
+        } catch (JSONException e) {
+            Log.e("DataMgr.jsonToAvatar() ","ERROR CASTING");
+            e.printStackTrace();
+            return  null;
+        }
+    }
+
+    public static List<Avatar> jsonToListAvatar(String pJson){
+        try {
+            JSONArray jsonArrayPlaylist =   new JSONArray(pJson);
+            if (jsonArrayPlaylist == null || jsonArrayPlaylist.length() == 0 ){ throw  new JSONException("NULL recieved OR empty"); }
+            List<Avatar> listAvatar =  new ArrayList<Avatar>();
+
+            for (int i=0;i<jsonArrayPlaylist.length() ;i++) {
+                JSONObject jsonObjAvatar = new JSONObject((String) jsonArrayPlaylist.get(i));
+                Avatar avatar = new Avatar();
+                try {avatar.setId(           (Integer) jsonObjAvatar.get("id")       ) ; } catch (Exception e){ }
+                try {avatar.setName(         (String)  jsonObjAvatar.get("Nom")      ) ; } catch (Exception e){ }
+                try {avatar.setAvatar(       (String)  jsonObjAvatar.get("Avatar")   ) ; } catch (Exception e){ }
+
+                listAvatar.add( avatar );
+            }
+            return listAvatar;
+        } catch (JSONException e) {
+            Log.e("DataMgr.jsonToListAvata","ERROR CASTING");
+            e.printStackTrace();
+            return  null;
+        }
+    }
+
+
 }

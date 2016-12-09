@@ -25,15 +25,26 @@ public class SongControler {
     }
 
 
-    public void setFgr(Musique pSong) {
-        Log.e("SongControler","setFgr");
+    private void setFgr(Musique pSong) {
         fg = new fgrSong();
         fg.setMusic(pSong);
         activity.changeFragment( fg );
     }
 
-
     public void onDoneSelectingSong(Musique s) {
+        this.setFgr( s );
+    }
+
+    public void onCreateSongAnswer(Token pToken) {
         //TODO
+    }
+
+    public void onMySongAnswer(Musique pMusique) {
+        if (pMusique != null){
+
+        }else {
+
+        }
+
     }
 }
