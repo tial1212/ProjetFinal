@@ -8,14 +8,6 @@
 
 
 
-
-
-    <LinearLayout
-        android:layout_width="300dp"
-        android:layout_height="fill_parent"
-        android:orientation="vertical"
-        android:layout_gravity="center">
-
         <TextView
             android:id="@+id/txt_song_content_title"
             android:layout_width="fill_parent"
@@ -27,6 +19,12 @@
             android:gravity="center"
             android:layout_weight="1"
             android:textAppearance="?attr/textAppearanceListItem" />
+        <TextView
+            android:layout_width="60dp"
+            android:textSize="20dp"
+            android:gravity="center"
+            android:layout_height="fill_parent"
+            android:text="par"/>
 
 
         <TextView
@@ -41,18 +39,12 @@
             android:layout_weight="1"
             android:textAppearance="?attr/textAppearanceListItem" />
 
+        <ImageView
+            android:id="@+id/img_song_content_image"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:textAppearance="?attr/textAppearanceListItem"
+            android:layout_marginRight="10dp" />
 
-    </LinearLayout>
-
-
-
-
-
-    <ImageView
-        android:id="@+id/img_song_content_image"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_gravity="center"
-        android:textAppearance="?attr/textAppearanceListItem"
-        android:layout_marginRight="10dp" />
 </LinearLayout>

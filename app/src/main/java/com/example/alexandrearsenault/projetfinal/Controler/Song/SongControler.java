@@ -16,7 +16,7 @@ public class SongControler {
     private final DataManager dataMgr;
     private final HomeActivity activity;
 
-    public fgrSong fg;
+    public fgrSong fgSong;
 
     public SongControler(HomeActivity pHomeActivity, DataManager pDataMgr) {
         activity = pHomeActivity;
@@ -25,26 +25,34 @@ public class SongControler {
     }
 
 
-    private void setFgr(Musique pSong) {
-        fg = new fgrSong();
-        fg.setMusic(pSong);
-        activity.changeFragment( fg );
-    }
 
-    public void onDoneSelectingSong(Musique s) {
-        this.setFgr( s );
+    public void onDoneSelectingSong(Musique pSong) {
+        fgSong = new fgrSong();
+        fgSong.setSong(pSong);
+        fgSong.setCanEdit(activity.user.getId() == pSong.getOwner());
+        activity.setFragment( fgSong );
     }
 
     public void onCreateSongAnswer(Token pToken) {
-        //TODO
-    }
-
-    public void onMySongAnswer(Musique pMusique) {
-        if (pMusique != null){
-
-        }else {
+        if (pToken == null){
+            activity.toaster.errorRequest();
+            return;
+        }
+        if (pToken.getEtat()){
+            // TODO
+        }
+        else {
 
         }
+    }
 
+    public void onSongAnswer(Musique pMusique) {
+        if (pMusique == null){
+            activity.toaster.errorRequest();
+            return;
+        }
+        fgSong = new fgrSong();
+        fgSong.setSong(pMusique);
+        fgSong.setCanEdit( pMusique.getOwner() == activity.user.getId()  );
     }
 }

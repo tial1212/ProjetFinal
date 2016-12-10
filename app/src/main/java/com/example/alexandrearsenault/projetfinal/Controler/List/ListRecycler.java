@@ -69,8 +69,6 @@ public class ListRecycler extends RecyclerView.Adapter<ListRecycler.ViewHolder> 
                 break;
             case  ACT_SONG :
                 id = R.layout.lay_song_content;
-            case  ACT_PLAYLIST_SONG :
-                id = R.layout.lay_song_content;
         }
         View view = LayoutInflater.from(parent.getContext()).inflate(id, parent, false);
         return new ViewHolder(view , action);
@@ -86,7 +84,7 @@ public class ListRecycler extends RecyclerView.Adapter<ListRecycler.ViewHolder> 
                 holder.avatar_name.setText(a.getName() );
                 //holder.avatar_image.setImageBitmap( a.getAvatar() );
                 holder.view.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
-                        activity.userControler.onDoneSelectingAvatar( a );
+                        activity.listControler.onDoneSelectingAvatar( a );
                 } } );
                 break;
             case ACT_PLAYLIST :
@@ -104,16 +102,7 @@ public class ListRecycler extends RecyclerView.Adapter<ListRecycler.ViewHolder> 
                 holder.song_artist.setText(s.getArtist() );
                 //holder.song_image.setImageBitmap( s.getCoverArt() );
                 holder.view.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
-                    activity.songControler.onDoneSelectingSong( s );
-                } } );
-            case  ACT_PLAYLIST_SONG :
-                final Musique s2 = listSong.get(position);
-                holder.song = s2;
-                holder.song_title.setText(s2.getTitle() );
-                holder.song_artist.setText(s2.getArtist() );
-                //holder.song_image.setImageBitmap( s.getCoverArt() );
-                holder.view.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) {
-                    activity.playlistControler.onDoneSelectingSong( s2 );
+                    activity.listControler.onDoneSelectingSong( s );
                 } } );
         }
     }

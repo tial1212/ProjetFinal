@@ -10,9 +10,6 @@
     android:orientation="horizontal">
 
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="fill_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,23 +25,25 @@
 
             <LinearLayout
                 android:orientation="horizontal"
-                android:layout_width="wrap_content"
-                android:layout_height="130dp">
+                android:layout_width="fill_parent"
+                android:layout_gravity="center"
+                android:layout_height="220dp">
 
                 <LinearLayout
                     android:orientation="vertical"
-                    android:layout_width="match_parent"
+                    android:layout_width="200dp"
+                    android:gravity="center"
                     android:layout_height="fill_parent">
-                    <TextView
+                    <EditText
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="wrap_content"
                         android:textAlignment="center"
-                        android:gravity="center"
+                        android:layout_gravity="center"
                         android:id="@+id/lbl_song_title"/>
 
-                    <TextView
+                    <EditText
                         android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
+                        android:layout_height="wrap_content"
                         android:textAlignment="center"
                         android:gravity="center"
                         android:id="@+id/lbl_song_artist"/>
@@ -55,8 +54,8 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginTop="20dp"
-                        android:text="Play with the Switch" />
+                        android:layout_weight="1"
+                        android:text="public" />
 
                     <Switch
                         android:id="@+id/swt_song_active"
@@ -64,16 +63,16 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
-                        android:layout_marginTop="20dp"
-                        android:text="Play with the Switch" />
+                        android:layout_weight="1"
+                        android:text="Active" />
 
 
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_weight="1"
+                    android:layout_width="160dp"
+                    android:layout_height="150dp"
+                    android:layout_marginTop="50dp"
                     android:id="@+id/img_song_cover_art"/>
 
 
@@ -95,8 +94,8 @@
                 android:layout_height="fill_parent"
                 android:textAlignment="center"
                 android:gravity="center"
+                android:textColor="@android:color/holo_red_dark"
                 />
 
         </LinearLayout>
-    </ScrollView>
 </RelativeLayout>

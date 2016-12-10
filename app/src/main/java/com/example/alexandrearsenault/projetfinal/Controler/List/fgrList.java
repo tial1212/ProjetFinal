@@ -68,17 +68,17 @@ public class fgrList extends Fragment {
     }
 
 
-    public void setListAvatar(List<Avatar> pList , HomeActivity pActivity){
+    public void setListAvatar(List<Avatar> pList ){
         type = TYPE_AVATAR;
         listAvatar = pList;
     }
 
-    public void setListPlaylist(List<ListesDeLecture> pList, HomeActivity pActivity){
+    public void setListPlaylist(List<ListesDeLecture> pList){
         type = TYPE_PLAYLIST;
         listPlaylist = pList;
     }
 
-    public void setListSong(List<Musique> pList , HomeActivity pActivity){
+    public void setListSong(List<Musique> pList ){
         type = TYPE_SONG;
         listSong= pList;
     }

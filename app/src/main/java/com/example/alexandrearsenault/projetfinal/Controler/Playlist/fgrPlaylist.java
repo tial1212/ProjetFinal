@@ -1,7 +1,6 @@
 package com.example.alexandrearsenault.projetfinal.Controler.Playlist;
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,12 +14,15 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
+import com.example.alexandrearsenault.projetfinal.Controler.List.ListControler;
 import com.example.alexandrearsenault.projetfinal.Controler.List.ListRecycler;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
 import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
 import com.example.alexandrearsenault.projetfinal.Modele.Musique;
+import com.example.alexandrearsenault.projetfinal.Modele.Token;
 import com.example.alexandrearsenault.projetfinal.R;
 
 import java.util.List;
@@ -41,16 +43,16 @@ public class fgrPlaylist extends Fragment {
     private HomeActivity activity;
     private TextView errorLbl ;
     private EditText name;
-    private Button bntEdit;
-    private EditText edTextName;
+    private Button btnEdit;
     private LinearLayout layEdit;
 
     private Boolean canEdit;
+    private Switch swtPublic;
+    private Switch swtActive;
 
     public void setPlaylist(ListesDeLecture pPlaylist) {
         playlist = pPlaylist;
     }
-
     public void setListSong(List<Musique> pList){
         listSong= pList;
     }
@@ -61,35 +63,37 @@ public class fgrPlaylist extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if  (playlist != null && listSong != null && canEdit!= null) {
 
-        if  (listSong != null && playlist != null && canEdit!= null) {
             view = inflater.inflate(R.layout.lay_playlist, container, false);
             activity = (HomeActivity) getActivity();
 
+            activity.listControler.action = (canEdit? ListControler.ACTION_MY_PLAYLIST:ListControler.ACTION_PUBLIC_PLAYLIST);
             recyclerView = (RecyclerView) view.findViewById(R.id.rec_playlist_list);
             recyclerView.setLayoutManager( new LinearLayoutManager( activity.getApplicationContext()) );
             recyclerView.setItemAnimator( new DefaultItemAnimator() );
             recyclerView.setAdapter(new ListRecycler(  (List<Object>)(List<?>) listSong   , activity  ) );
 
+            errorLbl = (TextView)   view.findViewById(R.id.lbl_playlist_error);
+            name = (EditText) view.findViewById(R.id.txt_playlist_name);
+            name.setClickable(false);
+            name.setText(playlist.getName() );
+            swtPublic = ((Switch) view.findViewById(R.id.swt_playlist_public));
+            swtPublic.setChecked(playlist.isPublic() );
+            swtPublic.setClickable(false);
+            swtActive = ((Switch) view.findViewById(R.id.swt_playlist_active));
+            swtActive.setChecked(playlist.isActive() );
+            swtActive.setClickable(false);
 
-
+            activity.listControler.action = ListControler.ACTION_SONG;
 
             if(canEdit){
-
-
-                bntEdit = (Button) view.findViewById(R.id.btn_playlist_edit);
-                bntEdit.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
+                btnEdit = (Button) view.findViewById(R.id.btn_playlist_edit);
+                btnEdit.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
                     isEditing= !isEditing;
                     edit();
                 } });
-                name = (EditText) view.findViewById(R.id.txt_playlist_name);
-                errorLbl = (TextView)   view.findViewById(R.id.lbl_playlist_error);
-
                 isEditing= false;
-
-                name.setText(playlist.getName() );
-                name.setEnabled(true);
-
             }else {
                 layEdit = (LinearLayout) view.findViewById(R.id.lay_playlist_edit);
                 layEdit.setVisibility(LinearLayout.GONE);
@@ -98,25 +102,22 @@ public class fgrPlaylist extends Fragment {
             return view ;
         }
         else{
-            Log.e("fgrPlaylist.onCrtView()","NO CONTENT : set listSong && playlist before display fragment");
+            Log.e("fgrPlaylist.onCrtView()","these MUST be set before displaying fragment --> playlist="+(playlist == null ?"UNSET":"SET" )+" , listSong="+(listSong == null ?"UNSET":"SET" )+" , canEdit="+(canEdit == null ?"UNSET":"SET" ) );
             return null;
         }
-
-
     }
 
     public void edit(){
-        bntEdit.setText(  (isEditing?"enregistrer":"modifier")  );  //TODO use res.String   ->>  lbl_playlist_btn_done lbl_playlist_btn_edit
-
+        btnEdit.setText(  (isEditing?  R.string.lbl_playlist_btn_done : R.string.lbl_playlist_btn_edit)  );
+        name.setClickable(false);
+        swtPublic.setClickable(isEditing);
+        swtActive.setClickable(isEditing);
 
         if (!isEditing){
             //try saving
             String name  = this.name.getText().toString();
-            boolean publiqe = ((Switch) view.findViewById(R.id.swt_playlist_public)).isChecked();
-            boolean active = ((Switch) view.findViewById(R.id.swt_playlist_active)).isChecked();
-
             if ( validate( name ) ){
-                DataManager.getInstance().modifyPlaylist(playlist.getId() ,name , publiqe , active );
+                DataManager.getInstance().modifyPlaylist(playlist.getId() ,name , swtPublic.isChecked() , swtActive.isChecked() );
             }
         }
     }
@@ -125,8 +126,28 @@ public class fgrPlaylist extends Fragment {
         boolean okName = ListesDeLecture.validateName(pName);
         boolean okFinal = okName;
         errorLbl.setText( (okFinal ? "" : ((okName ?"":"nom invalide " )  )));
-        errorLbl.setTextColor(  ( okFinal ? Color.BLACK : Color.RED) );
         return  okFinal;
+    }
+
+
+    public void onModifyPlaylistAnswer( Token pToken) {
+        if ( pToken != null && pToken.getEtat() ) {
+            activity.toaster.okModify( ListesDeLecture.class.toString() );
+            return;
+        }
+        else {
+            //show error message & revert
+            if (pToken == null ){
+                activity.toaster.errorRequest();
+            }
+            else{
+                activity.toaster.errorModify( pToken );
+            }
+            name.setClickable(false);
+            swtPublic.setChecked(playlist.isPublic());
+            swtPublic.setChecked(playlist.isPublic());
+            name.setText(playlist.getName() );
+        }
     }
 
 }

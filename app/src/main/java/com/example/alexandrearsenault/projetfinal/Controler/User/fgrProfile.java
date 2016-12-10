@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
+import com.example.alexandrearsenault.projetfinal.Data.ObjectConvertor;
 import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
 import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
@@ -73,14 +74,14 @@ public class fgrProfile extends Fragment {
             this.btnImgAvatar = (ImageButton) view.findViewById(R.id.btnImg_profile_avatar);
             this.btnImgAvatar.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
                 //select avatar
-                activity.action = HomeActivity.ACT_AVATAR_LOAD;
+                activity.action = HomeActivity.ACT_AVATAR_MODIFY;
                 DataManager.getInstance().getAvatarList(0,20);
 
             } });
 
             this.btnLogoff = (Button) view.findViewById(R.id.btn_profile_logoff);
             this.btnLogoff.setOnClickListener(new View.OnClickListener() { @Override   public void onClick(View view) {
-                activity.action = HomeActivity.ACT_AVATAR_LOAD;
+                activity.action = HomeActivity.ACT_AVATAR_MODIFY;
                 DataManager.getInstance().logoff( activity.user.getEMaill() );
             } });
 
@@ -90,14 +91,14 @@ public class fgrProfile extends Fragment {
 
             this.btnEdit.setText( getString(R.string.lbl_profile_btn_edit ) );
 
-            //DataManager.getInstance().getUserNbSong();
+            //DataManager.getInstance().getUserNbSong();   //TODO put me back when service done
             //DataManager.getInstance().getUserNbPlaylist();
 
             return view ;
         }
         else {
             Log.e("fgrProfile.onCreateView","Coud NOT load fgrProfile because !isUserConnected ");
-            activity.changeFragment( new fgrStart() );
+            activity.setFragment( new fgrStart() );
             return null;
         }
     }
@@ -133,12 +134,17 @@ public class fgrProfile extends Fragment {
 
 
     public void onEditAnswer(Token pToken) {
-        if (pToken != null &&  pToken.getEtat() == true ){
-            Toast.makeText(activity.getApplicationContext(), "modification OK", Toast.LENGTH_SHORT).show();
+        if (pToken == null ){
+            activity.toaster.errorRequest();
+            return;
+        }
+        if ( pToken.getEtat() == true ){
+            activity.toaster.okModify("profile");
             activity.user.setAvatar(idAvatar);
             activity.user.setAlias(alias);
-        } else {
-            Toast.makeText(activity.getApplicationContext(), "ERREUR : modification annulé : ", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            activity.toaster.errorModify(pToken);
             aliasEdit.setText(activity.user.getAlias() );
         }
     }
@@ -156,13 +162,13 @@ public class fgrProfile extends Fragment {
 
 
     public void onDoneSelectingAvatar(Avatar pAvatar) {
-
-        if (pAvatar != null){
-            //btnImgAvatar.setImageBitmap( pAvatar.getAvatar() ); FIXME
-            this.idAvatar = pAvatar.getId();
+        if (pAvatar == null){
+            activity.toaster.message("Erreur sélection avatar");
+            return;
         }
         else {
-            Toast.makeText(activity.getApplicationContext(), "Erreur sélection avatar", Toast.LENGTH_SHORT).show();
+            this.idAvatar = pAvatar.getId();
+            //btnImgAvatar.setImageBitmap(ObjectConvertor.stringBas64ToBitMap(pAvatar.getAvatar())); TODO remove when stringBas64ToBitMap done
         }
 
     }

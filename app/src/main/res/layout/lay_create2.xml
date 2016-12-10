@@ -50,18 +50,12 @@
             <TextView
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:text="msg error"
                 android:gravity="center_horizontal"
                 android:id="@+id/lbl_create2_error"
                 android:textSize="32sp"
                 android:layout_weight="2"
                 android:textColor="@android:color/holo_red_dark" />
         </LinearLayout>
-
-
-
-
-
 
 
         <LinearLayout
@@ -84,7 +78,7 @@
 
             <ImageView
 
-                android:id="@+id/image"
+                android:id="@+id/img_create2_captcha"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_gravity="right"
@@ -142,7 +136,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/lbl_create2_btn_send"
-                android:id="@+id/button" />
+                android:id="@+id/btn_create2_send" />
 
         </LinearLayout>
 

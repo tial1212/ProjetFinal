@@ -5,6 +5,7 @@ import android.widget.Toast;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
+import com.example.alexandrearsenault.projetfinal.Data.ObjectConvertor;
 import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
 import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
 import com.example.alexandrearsenault.projetfinal.Modele.Musique;
@@ -18,12 +19,17 @@ import java.util.List;
 public class ListControler {
 
 
-    private static final int ACTION_MY_MUSIC        = 1;
-    private static final int ACTION_PUBLIC_MUSIC    = 2;
-    private static final int ACTION_MY_PLAYLIST     = 3;
-    private static final int ACTION_PUBLIC_PLAYLIST = 4;
+    public static final int ACTION_NULL            =-1;
 
-    private static int action;
+    public static final int ACTION_AVATAR          = 1;
+
+    public static final int ACTION_MY_PLAYLIST     = 2;
+    public static final int ACTION_PUBLIC_PLAYLIST = 3;
+
+    public static final int ACTION_SONG            = 4;
+
+
+    public int action;
     private final DataManager dataMgr;
     private final HomeActivity activity;
     private fgrList fgrList;
@@ -42,6 +48,17 @@ public class ListControler {
     public void onAvatarAnswer(List<Avatar> pList) {
 
     }
+    public void onDoneSelectingAvatar(Avatar pAvatar) {
+        switch (action) {
+            case ACTION_AVATAR:
+                activity.userControler.onDoneSelectingAvatar( pAvatar );
+                action = ACTION_NULL;
+                break;
+            default:
+                Log.e("LstCtrl", "onDoneSelectingAvatar() : action inconnue");
+                break;
+        }
+    }
 
 
     /****************
@@ -51,23 +68,46 @@ public class ListControler {
     public void onMySongListAnswer(List<Musique> pListSong) {
         //TODO
         if (pListSong != null){
-            fgrList.setListSong(pListSong , activity);
+            fgrList.setListSong(pListSong );
         }else {
-            Toast.makeText(activity.getApplicationContext(), "Impossible de charger vos chansons", Toast.LENGTH_SHORT).show();
+            activity.toaster.message( "Impossible de charger vos chansons" );
         }
     }
     public void onPublicSongListAnswer(List<Musique> pListSong) {
         //TODO
         if (pListSong != null){
-            fgrList.setListSong(pListSong , activity );
+            fgrList.setListSong(pListSong  );
         }else {
-            Toast.makeText(activity.getApplicationContext(), "Impossible de charger les chansons publiques", Toast.LENGTH_SHORT).show();
+            activity.toaster.message( "Impossible de charger les chansons publiques" );
         }
     }
+    public void onDoneSelectingPlaylist(ListesDeLecture pPlaylist) {
+        switch (action) {
+            case ACTION_MY_PLAYLIST:
+                activity.playlistControler.onDoneSelectingMyPlaylist( pPlaylist );
+                action = ACTION_NULL;
+                break;
+            case ACTION_PUBLIC_PLAYLIST:
+                activity.playlistControler.onDoneSelectingPublicPlaylist( pPlaylist );
+                action = ACTION_NULL;
+                break;
+            default:
+                Log.e("ListControler", "onDoneSelectingPlaylist() : action  inconnue");
+                break;
+        }
 
-    public void onDoneSelectingPlaylist(ListesDeLecture p) {
-        Log.e("HERE","HERE");
-        activity.playlistControler.setFgr( p );
+
+    }
+    public void onDoneSelectingSong(Musique pSong) {
+        switch (action) {
+            case ACTION_SONG:
+                activity.songControler.onDoneSelectingSong( pSong );
+                action = ACTION_NULL;
+                break;
+            default:
+                Log.e("ListControler", "onDoneSelectingSong() : action inconnue");
+                break;
+        }
     }
 
 
@@ -77,11 +117,12 @@ public class ListControler {
 
     public void onMyPlaylistListAnswer(List<ListesDeLecture> pListPlaylist) {
         if (pListPlaylist != null){
+            action = ACTION_MY_PLAYLIST;
             fgrList = new fgrList();
-            fgrList.setListPlaylist(pListPlaylist, activity);
-            activity.changeFragment(fgrList);
+            fgrList.setListPlaylist(pListPlaylist );
+            activity.setFragment(fgrList);
         }else {
-            Toast.makeText(activity.getApplicationContext(), "Impossible de charger vos liste de lecture", Toast.LENGTH_SHORT).show();
+            activity.toaster.message( "Impossible de charger vos liste de lecture" );
         }
     }
 

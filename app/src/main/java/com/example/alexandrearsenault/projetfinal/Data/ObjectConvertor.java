@@ -1,5 +1,8 @@
 package com.example.alexandrearsenault.projetfinal.Data;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.example.alexandrearsenault.projetfinal.Modele.Avatar;
@@ -7,6 +10,7 @@ import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
 import com.example.alexandrearsenault.projetfinal.Modele.Musique;
 import com.example.alexandrearsenault.projetfinal.Modele.Token;
 import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
+import com.example.alexandrearsenault.projetfinal.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,6 +18,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.EmptyStackException;
 import java.util.List;
 
 /**
@@ -28,14 +33,32 @@ public class ObjectConvertor {
         try {
             JSONObject jsonObjInteger = new JSONObject(pJson);
             Integer igr=null;
-            try {  igr   = (Integer) jsonObjInteger.get("nb")  ; } catch (Exception e){ }
+            try {  igr   = (Integer) jsonObjInteger.get("nb")  ; } catch (Exception e){ } // FIXME  replace "nb" w/ real value
 
             return igr;
 
         } catch (JSONException e) {
-
+            Log.e("ObjectConvertor ","jsonToInteger() -> Exception occured");
+            e.printStackTrace();
             return  null;
         }
+    }
+
+
+    public static Bitmap stringBas64ToBitMap(String pB64, Context c){   //TODO remove 2nd parar
+        try{
+
+            if ( pB64 == null ){throw new EmptyStackException();}
+
+            Bitmap bm  = BitmapFactory.decodeResource( c.getResources(), R.drawable.ic_menu_default_avatar );
+            return bm;
+            //FIXME do a B64 convertion 2 json
+        } catch (Exception e) {
+            Log.e("ObjectConvertor ","stringBas64ToBitMap() -> Exception cooured");
+            e.printStackTrace();
+            return  null;
+        }
+
     }
 
 
@@ -55,7 +78,7 @@ public class ObjectConvertor {
             return token;
 
         } catch (JSONException e) {
-            Log.e("DataMgr.jsonToToken() ","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToToken() -> NULL recieved");
             e.printStackTrace();
             return  null;
         }
@@ -77,7 +100,7 @@ public class ObjectConvertor {
 
             return user;
         } catch (JSONException e) {
-            Log.e("DataManager.jsonToSong","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToUser() -> NULL recieved");
             e.printStackTrace();
             return  null;
         }
@@ -90,7 +113,7 @@ public class ObjectConvertor {
             Musique song =new Musique();
             try {song.setId(     (Integer) jsonObjSong.get("Id")         ) ; } catch (Exception e){ }
             try {song.setDate(    (Date)   jsonObjSong.get("Date")       ) ; } catch (Exception e){ }
-            try {song.setOwner(   (Integer)jsonObjSong.get("Proprietaire")   ); ; } catch (Exception e){ }
+            try {song.setOwner(   (Integer)jsonObjSong.get("Proprietaire")); } catch (Exception e){ }
             try {song.setTitle(   (String) jsonObjSong.get("Titre")      ) ; } catch (Exception e){ }
             try {song.setArtist( (String)  jsonObjSong.get("Artiste")    ) ; } catch (Exception e){ }
             try {song.setMusic(  (String)  jsonObjSong.get("Musique")    ) ; } catch (Exception e){ }
@@ -99,7 +122,7 @@ public class ObjectConvertor {
 
             return song;
         } catch (JSONException e) {
-            Log.e("DataManager.jsonToSong","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToSong() -> NULL recieved");
             e.printStackTrace();
             return  null;
         }
@@ -126,7 +149,7 @@ public class ObjectConvertor {
             }
             return listSong;
         } catch (JSONException e) {
-            Log.e("DataMgr.jsonToListSong","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToListSong() -> NULL recieved");
             e.printStackTrace();
             return  null;
         }
@@ -146,7 +169,7 @@ public class ObjectConvertor {
 
             return playlist;
         } catch (JSONException e) {
-            Log.e("DataMgr.jsonToPlaylist","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToPlaylist() -> NULL recieved");
             e.printStackTrace();
             return  null;
         }
@@ -172,7 +195,7 @@ public class ObjectConvertor {
             }
             return listPlaylist;
         } catch (JSONException e) {
-            Log.e("DataMgr.jsonToListPlayl","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToListPlaylist() -> NULL recieved OR empty");
             e.printStackTrace();
             return  null;
         }
@@ -192,7 +215,7 @@ public class ObjectConvertor {
             return avatar;
 
         } catch (JSONException e) {
-            Log.e("DataMgr.jsonToAvatar() ","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToAvatar() -> NULL recieved");
             e.printStackTrace();
             return  null;
         }
@@ -215,7 +238,7 @@ public class ObjectConvertor {
             }
             return listAvatar;
         } catch (JSONException e) {
-            Log.e("DataMgr.jsonToListAvata","ERROR CASTING");
+            Log.e("ObjectConvertor ","jsonToListAvatar() -> NULL recieved OR empty");
             e.printStackTrace();
             return  null;
         }

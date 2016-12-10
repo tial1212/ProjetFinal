@@ -2,7 +2,6 @@ package com.example.alexandrearsenault.projetfinal.Activity;
 
 import android.app.Fragment;
 import android.app.FragmentTransaction;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,19 +14,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.example.alexandrearsenault.projetfinal.Controler.List.ListControler;
-import com.example.alexandrearsenault.projetfinal.Controler.List.fgrList;
 import com.example.alexandrearsenault.projetfinal.Controler.Playlist.PlaylistControler;
 import com.example.alexandrearsenault.projetfinal.Controler.Song.SongControler;
 import com.example.alexandrearsenault.projetfinal.Controler.User.UserControler;
-import com.example.alexandrearsenault.projetfinal.Controler.User.fgrProfile;
-import com.example.alexandrearsenault.projetfinal.Controler.User.fgrStart;
 import com.example.alexandrearsenault.projetfinal.Data.DataManager;
-import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
-import com.example.alexandrearsenault.projetfinal.Modele.Musique;
-import com.example.alexandrearsenault.projetfinal.Modele.Token;
 import com.example.alexandrearsenault.projetfinal.Modele.Utilisateur;
 import com.example.alexandrearsenault.projetfinal.R;
 import com.google.android.gms.appindexing.Action;
@@ -35,7 +27,6 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.List;
 
 public class HomeActivity extends AppCompatActivity
         implements
@@ -47,33 +38,30 @@ public class HomeActivity extends AppCompatActivity
     public static final int ACT_CREATE        = 3;
     public static final int ACT_START         = 4;
     public static final int ACT_PROFILE       = 5;
-    public static final int ACT_AVATAR_LOAD   = 6;
-    public static final int ACT_AVATAR_CREATE = 7;
-    public static final int ACT_AVATAR_MODIFY = 8;
-    public static final int ACT_PLAYLIST_MY = 9;
-    public static final int ACT_SONG_MY = 10;
+    public static final int ACT_AVATAR_CREATE = 6;
+    public static final int ACT_AVATAR_MODIFY = 7;
+    public static final int ACT_PLAYLIST_MY   = 8;
+    public static final int ACT_SONG_MY       = 9;
     public int action;
 
 
-
-
-    //keep login identifiant
-    public Utilisateur user;
-
     private DataManager dataMgr;
     public Drawer drawer ;
+    public Utilisateur user;
 
     public UserControler userControler;
     public SongControler songControler;
     public ListControler listControler;
     public PlaylistControler playlistControler;
 
+    public ToastInfo toaster;
+
     private GoogleApiClient client;
 
-
-    //temporary for testing
+    //TODO temporary for testing
     public static String emailTest = "tial1212@gmail.com";
     public static String pswdTest = "Alex123@";
+    public static String aliasTest = "alex2";
 
 
     @Override
@@ -82,7 +70,6 @@ public class HomeActivity extends AppCompatActivity
         setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
 
         //DRAWER
         DrawerLayout drawerLay = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -101,9 +88,7 @@ public class HomeActivity extends AppCompatActivity
                 userControler.goToProfile();
             }
         });
-        TextView alias = (TextView) drawerLayout.findViewById(R.id.nav_alias);
-        alias.setText("AGDZ");
-        drawer = new Drawer(drawerLayout );
+        drawer = new Drawer(drawerLayout , navigationView.getMenu() , getApplicationContext()  );
         drawer.setDefaultInfo();
 
 
@@ -113,14 +98,11 @@ public class HomeActivity extends AppCompatActivity
         songControler = new SongControler(this,dataMgr);
         listControler = new ListControler(this,dataMgr);
         playlistControler = new PlaylistControler(this,dataMgr);
-
+        //Toast
+        toaster = new ToastInfo(this);
 
         //try to connect
-
-       userControler.tryInitialConnection();
-
-
-
+        userControler.tryInitialConnection();
 
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
@@ -135,21 +117,17 @@ public class HomeActivity extends AppCompatActivity
         }
     }
 
-
-
-
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         switch (id) {
             case R.id.nav_my_song:
-                dataMgr.getMySongs(0,20);
+                dataMgr.getMySongs(0,100);
                 break;
             case R.id.nav_my_playlist:
                 action = ACT_PLAYLIST_MY;
-                dataMgr.getMyPlaylists(0,20);
+                dataMgr.getMyPlaylists(0,100);
                 break;
             case R.id.nav_add_song:
                 Log.e("menu", " add song");
@@ -172,22 +150,13 @@ public class HomeActivity extends AppCompatActivity
         return true;
     }
 
-
-
-
-
-    public void changeFragment(Fragment pFragment) {
-        Log.e("HomeActivity", "changeFragment");
+    public void setFragment(Fragment pFragment) {
+        Log.e("HomeActivity", "setFragment()"+pFragment.getClass().toString() );
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.replace(R.id.main_content, pFragment);
         ft.addToBackStack(null);
         ft.commit();
     }
-
-
-
-
-
 
     public Action getIndexApiAction() {
         Thing object = new Thing.Builder()

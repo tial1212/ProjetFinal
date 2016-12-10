@@ -1,7 +1,6 @@
 package com.example.alexandrearsenault.projetfinal.Data;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.alexandrearsenault.projetfinal.Activity.HomeActivity;
 import com.example.alexandrearsenault.projetfinal.Modele.ListesDeLecture;
@@ -56,6 +55,7 @@ public class DataManager {
     //private static final String SERVER_PATH_U18   = SERVER_PATH + "";
     private static final String SERVER_PATH_A8    = SERVER_PATH + "/service/avatar/getAvatar?";
     private static final String SERVER_PATH_A9    = SERVER_PATH + "/service/avatar/getAvatarList?";
+    private static final String SERVER_PATH_A13    = SERVER_PATH + "/service/captcha/getCaptcha?";  //TODO
 
 
 
@@ -94,6 +94,7 @@ public class DataManager {
     //private static final int ACTION_U18     = 32;
     private static final int ACTION_A8      = 33;
     private static final int ACTION_A9      = 34;
+    private static final int ACTION_A13     = 35;
 
     private static  DataManager instance = null;
     private HomeActivity activity;
@@ -128,19 +129,38 @@ public class DataManager {
                 break;
             case ACTION_P1_1:
                 //createUser()
-                activity.userControler.onCreateAnswer( ObjectConvertor.jsonToToken(pResultJSON));
+                //activity.userControler.onCreateUserAnswer( ObjectConvertor.jsonToToken(pResultJSON));
+                //TODO ERASE testing purpose only
+                Token t = new Token();
+                t.setAction("création ok ");
+                t.setEtat(true);
+                t.setCaptchaStr("c4ptchA");
+                activity.userControler.onCreateUserAnswer( t );
+                //TODO ERASE testing purpose only
                 break;
             case ACTION_P1_2:
                 //confirmCreateUser()
+                activity.userControler.onConfirmCreateUser(ObjectConvertor.jsonToToken(pResultJSON));
+                //TODO ERASE testing purpose only
+                Token t2 = new Token();
+                t2.setAction("création ok ");
+                t2.setEtat(true);
+                t2.setCaptchaStr("c4ptchA");
+                activity.userControler.onConfirmCreateUser( t2 );
+                //TODO ERASE testing purpose only
                 break;
             case ACTION_U2:
                 //getUser()
+                //activity.userControler.onGetUserAnswer( ObjectConvertor.jsonToUser(pResultJSON) );
+                //TODO ERASE testing purpose only
                 Log.e("DataManager", "getUser()");
                 Utilisateur alex = new Utilisateur();
                 alex.setEMaill(HomeActivity.emailTest);
                 alex.setPasowrd(HomeActivity.pswdTest);
                 alex.setAlias("tial");
-                activity.userControler.onUserAnswer( alex );
+                alex.setId(1);
+                activity.userControler.onGetUserAnswer( alex );
+                //TODO ERASE testing purpose only
                 break;
             case ACTION_U1:
                 //modifierUser()
@@ -166,6 +186,7 @@ public class DataManager {
                 break;
             case ACTION_U11:
                 //modifySong()
+                activity.songControler.fgSong.onSongModifyAnswer(ObjectConvertor.jsonToToken(pResultJSON));
                 break;
             case ACTION_U12:
                 //setActiveSong()
@@ -184,7 +205,7 @@ public class DataManager {
                 break;
             case ACTION_U5:
                 //modifyPlaylist()
-                activity.playlistControler.onModifyPlaylistAnswer( ObjectConvertor.jsonToToken(pResultJSON) );
+                activity.playlistControler.fgPlaylist.onModifyPlaylistAnswer( ObjectConvertor.jsonToToken(pResultJSON) );
                 break;
             case ACTION_A12:
                 //getSongListForPlaylist()
@@ -225,7 +246,7 @@ public class DataManager {
                 break;
             case ACTION_A6:
                 //getMySongs()
-                activity.songControler.onMySongAnswer(ObjectConvertor.jsonToSong(pResultJSON));
+                activity.songControler.onSongAnswer(ObjectConvertor.jsonToSong(pResultJSON));
                 break;
             case ACTION_A7:
                 //getPublicSongsList()
@@ -237,6 +258,10 @@ public class DataManager {
             case ACTION_A9:
                 //getAvatarList()
                 activity.userControler.onGetAvatarListAnswer( ObjectConvertor.jsonToListAvatar(pResultJSON) );
+                break;
+            case ACTION_A13:
+                //getCaptcha()
+                //activity.userControler.onGetCaptchaAnswer( ObjectConvertor.stringBas64ToBitMap( pResultJSON ) );
                 break;
         }
     }
@@ -260,15 +285,13 @@ public class DataManager {
     }
 
     private boolean askToExecuteAction() {
-
-
         this.actionToken = this.getActionToken(activity.user.getEMaill() );
         if (this.actionToken != null && this.actionToken.getEtat() == true){
             return true;
         }
         else {
             this.actionToken = null;
-            Toast.makeText(activity.getApplicationContext(), "Requête impossible : ActionToken invalide", Toast.LENGTH_SHORT).show();
+            activity.toaster.message("Requête impossible : ActionToken invalide");
             return false;
         }
     }
@@ -471,6 +494,14 @@ public class DataManager {
         if ( this.askToExecuteAction() ) {
             String request = SERVER_PATH_A9+"idToken="+this.getTokenPath()+"&premier="+pFirst+"&dernier="+pLast;;
             new DownloadJSONAsyncTask(this , ACTION_A9 , request ).execute();
+        }
+    }
+    //********************************************  AVATAR  ********************************************//
+    public void getCaptcha(String pCaptchaStr ) {
+        Log.e("DataManager", "getPublicPlaylistList("+pCaptchaStr+")");
+        if ( this.askToExecuteAction() ) {
+            String request = SERVER_PATH_A13+"captchaStr="+pCaptchaStr;
+            new DownloadJSONAsyncTask(this , ACTION_A13 , request ).execute();
         }
     }
     //********************************************  SONG PLAYLIST  ********************************************//
